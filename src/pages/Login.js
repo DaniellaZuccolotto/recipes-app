@@ -4,6 +4,17 @@ import RecipeContext from '../provider/RecipesContext';
 function Login() {
   const { loginData, handleChange } = useContext(RecipeContext);
   const { email, password } = loginData;
+
+  const disabledBtn = () => {
+    const validateEmail = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]/i;
+    const PASSWORD_LENGTH = 6;
+    console.log(validateEmail.test(email));
+    if (validateEmail.test(email) && password.length > PASSWORD_LENGTH) {
+      return false;
+    }
+    return true;
+  };
+
   return (
     <form>
       <label htmlFor="email">
@@ -31,6 +42,7 @@ function Login() {
       <button
         type="submit"
         data-testid="login-submit-btn"
+        disabled={ disabledBtn() }
       >
         Enter
       </button>
