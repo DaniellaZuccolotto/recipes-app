@@ -4,6 +4,8 @@ import React from 'react';
 import App from '../App';
 import renderWithRouter from './helpers/renderWithRouter';
 
+const EMAIL = 'teste@teste.teste';
+
 describe('Testa a página de Login', () => {
   test('Verifica se existem os inputs de email e senha e o botão Enter', () => {
     renderWithRouter(<App />);
@@ -24,8 +26,8 @@ describe('Testa a página de Login', () => {
     const emailInput = screen.getByRole('textbox');
     expect(emailInput).toHaveValue('');
 
-    userEvent.type(emailInput, 'teste@teste.teste');
-    expect(emailInput).toHaveValue('teste@teste.teste');
+    userEvent.type(emailInput, EMAIL);
+    expect(emailInput).toHaveValue(EMAIL);
   });
 
   test('Verifica se o campo de password funciona', () => {
@@ -48,10 +50,10 @@ describe('Testa a página de Login', () => {
     expect(passwordInput).toHaveValue('');
     expect(enterButton).toBeDisabled();
 
-    userEvent.type(emailInput, 'teste@teste.teste');
+    userEvent.type(emailInput, EMAIL);
     userEvent.type(passwordInput, '123456');
 
-    expect(emailInput).toHaveValue('teste@teste.teste');
+    expect(emailInput).toHaveValue(EMAIL);
     expect(passwordInput).toHaveValue('123456');
     expect(enterButton).not.toBeDisabled();
   });
