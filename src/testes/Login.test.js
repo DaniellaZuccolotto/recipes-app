@@ -57,6 +57,7 @@ describe('Testa a página de Login', () => {
     expect(passwordInput).toHaveValue('1234567');
     expect(enterButton).not.toBeDisabled();
   });
+
   test('verifica se ao clicar no botão, é salvo duas chaves em localStorage', () => {
     renderWithRouter(<App />);
     const emailInput = screen.getByRole('textbox');
@@ -71,5 +72,20 @@ describe('Testa a página de Login', () => {
 
     expect(localStorage.getItem('mealsToken')).toBe('1');
     expect(localStorage.getItem('cocktailsToken')).toBe('1');
+  });
+
+  test('verifica se ao clicar no botão, é salvo o email no localStorage', () => {
+    renderWithRouter(<App />);
+    const emailInput = screen.getByRole('textbox');
+    const passwordInput = screen.getByPlaceholderText(/password/i);
+    const enterButton = screen.getByRole('button', {
+      name: /enter/i,
+    });
+
+    userEvent.type(emailInput, EMAIL);
+    userEvent.type(passwordInput, '1234567');
+    userEvent.click(enterButton);
+
+    expect(localStorage.getItem('user')).toBe(JSON.stringify({ email: EMAIL }));
   });
 });
