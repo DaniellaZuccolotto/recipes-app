@@ -36,4 +36,23 @@ describe('Testa a página de Login', () => {
     userEvent.type(passwordInput, '102030405060');
     expect(passwordInput).toHaveValue('102030405060');
   });
+  test('verifica se é validado email e senha', () => {
+    renderWithRouter(<App />);
+    const emailInput = screen.getByRole('textbox');
+    const passwordInput = screen.getByPlaceholderText(/password/i);
+    const enterButton = screen.getByRole('button', {
+      name: /enter/i,
+    });
+
+    expect(emailInput).toHaveValue('');
+    expect(passwordInput).toHaveValue('');
+    expect(enterButton).toBeDisabled();
+
+    userEvent.type(emailInput, 'teste@teste.teste');
+    userEvent.type(passwordInput, '123456');
+
+    expect(emailInput).toHaveValue('teste@teste.teste');
+    expect(passwordInput).toHaveValue('123456');
+    expect(enterButton).not.toBeDisabled();
+  });
 });
