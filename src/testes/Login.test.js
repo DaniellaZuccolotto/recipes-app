@@ -51,10 +51,10 @@ describe('Testa a página de Login', () => {
     expect(enterButton).toBeDisabled();
 
     userEvent.type(emailInput, EMAIL);
-    userEvent.type(passwordInput, '123456');
+    userEvent.type(passwordInput, '1234567');
 
     expect(emailInput).toHaveValue(EMAIL);
-    expect(passwordInput).toHaveValue('123456');
+    expect(passwordInput).toHaveValue('1234567');
     expect(enterButton).not.toBeDisabled();
   });
 });

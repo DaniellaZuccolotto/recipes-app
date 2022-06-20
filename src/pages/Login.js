@@ -9,7 +9,7 @@ function Login() {
     const validateEmail = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]/i;
     const PASSWORD_LENGTH = 6;
     console.log(validateEmail.test(email));
-    if (validateEmail.test(email) && password.length >= PASSWORD_LENGTH) {
+    if (validateEmail.test(email) && password.length > PASSWORD_LENGTH) {
       return false;
     }
     return true;
