@@ -11,6 +11,7 @@ function App() {
     <RecipeContextProvider>
       <Switch>
         <Route exact path="/" component={ Login } />
+        <Route exact path="/foods">FOODS</Route>
         <Route><h1>Pagina não encontrada</h1></Route>
       </Switch>
     </RecipeContextProvider>

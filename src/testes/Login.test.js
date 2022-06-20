@@ -88,4 +88,21 @@ describe('Testa a página de Login', () => {
 
     expect(localStorage.getItem('user')).toBe(JSON.stringify({ email: EMAIL }));
   });
+
+  test('verifica se ao clicar no botão, é redirecionado para a página de foods', () => {
+    const { history } = renderWithRouter(<App />);
+    const emailInput = screen.getByRole('textbox');
+    const passwordInput = screen.getByPlaceholderText(/password/i);
+    const enterButton = screen.getByRole('button', {
+      name: /enter/i,
+    });
+
+    expect(history.location.pathname).toBe('/');
+
+    userEvent.type(emailInput, EMAIL);
+    userEvent.type(passwordInput, '1234567');
+    userEvent.click(enterButton);
+
+    expect(history.location.pathname).toBe('/foods');
+  });
 });

@@ -1,7 +1,8 @@
 import React, { useContext } from 'react';
+import PropTypes from 'prop-types';
 import RecipeContext from '../provider/RecipesContext';
 
-function Login() {
+function Login({ history }) {
   const { loginData, handleChange } = useContext(RecipeContext);
   const { email, password } = loginData;
 
@@ -22,6 +23,7 @@ function Login() {
       email,
     };
     localStorage.setItem('user', JSON.stringify(user));
+    history.push('/foods');
   };
 
   return (
@@ -59,5 +61,9 @@ function Login() {
     </form>
   );
 }
+
+Login.propTypes = {
+  history: PropTypes.shape({ push: PropTypes.func }).isRequired,
+};
 
 export default Login;
