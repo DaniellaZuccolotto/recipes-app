@@ -1,0 +1,39 @@
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import React from 'react';
+import App from '../App';
+import renderWithRouter from './helpers/renderWithRouter';
+
+describe('Testa a página de Login', () => {
+  test('Verifica se existem os inputs de email e senha e o botão Enter', () => {
+    renderWithRouter(<App />);
+    const emailInput = screen.getByRole('textbox');
+    expect(emailInput).toBeDefined();
+
+    const passwordInput = screen.getByPlaceholderText(/password/i);
+    expect(passwordInput).toBeDefined();
+
+    const enterButton = screen.getByRole('button', {
+      name: /enter/i,
+    });
+    expect(enterButton).toBeDefined();
+  });
+
+  test('Verifica se o campo de email funciona', () => {
+    renderWithRouter(<App />);
+    const emailInput = screen.getByRole('textbox');
+    expect(emailInput).toHaveValue('');
+
+    userEvent.type(emailInput, 'teste@teste.teste');
+    expect(emailInput).toHaveValue('teste@teste.teste');
+  });
+
+  test('Verifica se o campo de password funciona', () => {
+    renderWithRouter(<App />);
+    const passwordInput = screen.getByPlaceholderText(/password/i);
+    expect(passwordInput).toHaveValue('');
+
+    userEvent.type(passwordInput, '102030405060');
+    expect(passwordInput).toHaveValue('102030405060');
+  });
+});
