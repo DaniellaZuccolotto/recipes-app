@@ -5,13 +5,14 @@ import { Switch, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Login from './pages/Login';
 import RecipeContextProvider from './provider/RecipeContextProvider';
+import Foods from './pages/Foods';
 
 function App() {
   return (
     <RecipeContextProvider>
       <Switch>
         <Route exact path="/" component={ Login } />
-        <Route exact path="/foods">FOODS</Route>
+        <Route exact path="/foods" component={ Foods } />
         <Route><h1>Pagina não encontrada</h1></Route>
       </Switch>
     </RecipeContextProvider>
