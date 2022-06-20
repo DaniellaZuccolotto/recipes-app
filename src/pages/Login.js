@@ -8,11 +8,16 @@ function Login() {
   const disabledBtn = () => {
     const validateEmail = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]/i;
     const PASSWORD_LENGTH = 6;
-    console.log(validateEmail.test(email));
     if (validateEmail.test(email) && password.length > PASSWORD_LENGTH) {
       return false;
     }
     return true;
+  };
+
+  const handleClick = (e) => {
+    e.preventDefault();
+    localStorage.setItem('mealsToken', '1');
+    localStorage.setItem('cocktailsToken', '1');
   };
 
   return (
@@ -43,6 +48,7 @@ function Login() {
         type="submit"
         data-testid="login-submit-btn"
         disabled={ disabledBtn() }
+        onClick={ handleClick }
       >
         Enter
       </button>
