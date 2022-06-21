@@ -1,12 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import profileIcon from '../images/profileIcon.svg';
 import searchIcon from '../images/searchIcon.svg';
 
-function Header({ history, pageName, searchEnabled }) {
+function Header({ pageName, searchEnabled }) {
+  const [enableSearchText, setEneableSearchText] = useState(false);
+  const history = useHistory();
+
   const ProfileLink = () => {
-    console.log('alo');
     history.push('/profile');
+  };
+
+  const ChangeSearchStatus = () => {
+    if (enableSearchText === true) {
+      return setEneableSearchText(false);
+    }
+    return setEneableSearchText(true);
   };
 
   return (
@@ -20,11 +30,21 @@ function Header({ history, pageName, searchEnabled }) {
       />
       <h1 data-testid="page-title">{ pageName }</h1>
       {
-        searchEnabled && (<img
+        searchEnabled && (<input
+          type="image"
           src={ searchIcon }
           alt="search"
           data-testid="search-top-btn"
+          onClick={ ChangeSearchStatus }
         />)
+      }
+      {
+        enableSearchText && (
+          <input
+            type="text"
+            data-testid="search-input"
+            placeholder="Digite sua pesquisa"
+          />)
       }
     </header>
   );
@@ -33,7 +53,6 @@ function Header({ history, pageName, searchEnabled }) {
 Header.propTypes = {
   pageName: PropTypes.string.isRequired,
   searchEnabled: PropTypes.bool,
-  history: PropTypes.shape({ push: PropTypes.func }).isRequired,
 };
 
 Header.defaultProps = {

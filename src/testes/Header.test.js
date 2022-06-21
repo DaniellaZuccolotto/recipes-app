@@ -11,7 +11,7 @@ describe('Testa o componente Header', () => {
       name: /profile/i,
     });
     expect(profileIcon).toBeDefined();
-    const searchIcon = screen.getByRole('img', {
+    const searchIcon = screen.getByRole('button', {
       name: /search/i,
     });
     expect(searchIcon).toBeDefined();
@@ -26,5 +26,17 @@ describe('Testa o componente Header', () => {
     });
     userEvent.click(profileIcon);
     expect(history.location.pathname).toBe('/profile');
+  });
+  test('Verifica se ao clicar na lupa a pesquisa aparece e desaparece', () => {
+    renderWithRouter(<Foods />);
+    const searchIcon = screen.getByRole('button', {
+      name: /search/i,
+    });
+    userEvent.click(searchIcon);
+    const searchText = screen.getByRole('textbox');
+    expect(searchText).toBeInTheDocument();
+    userEvent.click(searchIcon);
+    expect(searchText).not.toBeInTheDocument();
+    userEvent.click(searchIcon);
   });
 });
