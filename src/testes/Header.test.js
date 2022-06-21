@@ -6,7 +6,7 @@ import renderWithRouter from './helpers/renderWithRouter';
 describe('Testa o componente Header', () => {
   test('Verifica se o Header tem o icone de profile, search e o page title', () => {
     renderWithRouter(<Foods />);
-    const profileIcon = screen.getByRole('img', {
+    const profileIcon = screen.getByRole('button', {
       name: /profile/i,
     });
     expect(profileIcon).toBeDefined();

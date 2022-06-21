@@ -3,13 +3,20 @@ import PropTypes from 'prop-types';
 import profileIcon from '../images/profileIcon.svg';
 import searchIcon from '../images/searchIcon.svg';
 
-function Header({ pageName, searchEnabled }) {
+function Header({ history, pageName, searchEnabled }) {
+  const ProfileLink = () => {
+    console.log('alo');
+    history.push('/profile');
+  };
+
   return (
     <header>
-      <img
+      <input
+        type="image"
         src={ profileIcon }
         alt="profile"
         data-testid="profile-top-btn"
+        onClick={ ProfileLink }
       />
       <h1 data-testid="page-title">{ pageName }</h1>
       {
@@ -26,6 +33,7 @@ function Header({ pageName, searchEnabled }) {
 Header.propTypes = {
   pageName: PropTypes.string.isRequired,
   searchEnabled: PropTypes.bool,
+  history: PropTypes.shape({ push: PropTypes.func }).isRequired,
 };
 
 Header.defaultProps = {
