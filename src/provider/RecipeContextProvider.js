@@ -8,16 +8,16 @@ function RecipeContextProvider({ children }) {
     password: '',
   });
 
-  const handleChange = ({ target: { value, name } }) => {
-    setLoginData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
+  const [searchData, setSearchData] = useState({
+    search: '',
+    filter: '',
+  });
 
   const contextValue = {
     loginData,
-    handleChange,
+    setLoginData,
+    searchData,
+    setSearchData,
   };
 
   return (
