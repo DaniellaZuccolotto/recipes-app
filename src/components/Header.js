@@ -49,21 +49,6 @@ function Header({ pageName, searchEnabled }) {
     default:
       return null;
     }
-    // let endPoint = '';
-    // if (filter === 'ingredient') {
-    //   endPoint = `https://www.themealdb.com/api/json/v1/1/filter.php?i=${search}`;
-    // }
-    // if (filter === 'name') {
-    //   endPoint = `https://www.themealdb.com/api/json/v1/1/search.php?s=${search}`;
-    // }
-    // if (filter === 'first-letter') {
-    //   if (search.length > 1) {
-    //     global.alert('Your search must have only 1 (one) character');
-    //   } else {
-    //     endPoint = `https://www.themealdb.com/api/json/v1/1/search.php?f=${search}`;
-    //   }
-    // }
-    // return endPoint;
   };
 
   const searchDrinks = () => {
