@@ -10,7 +10,7 @@ function Header({ pageName, searchEnabled }) {
   const [enableSearchText, setEneableSearchText] = useState(false);
   const history = useHistory();
   const { searchData,
-    setSearchData, setDataApi } = useContext(RecipeContext);
+    setSearchData, setDataApi, verifyQuantidade } = useContext(RecipeContext);
   const { search, filter } = searchData;
 
   const handleChange = ({ target: { value, name } }) => {
@@ -43,7 +43,8 @@ function Header({ pageName, searchEnabled }) {
       return `https://www.themealdb.com/api/json/v1/1/search.php?s=${search}`;
     case 'first-letter':
       if (search.length > 1) {
-        return global.alert('Your search must have only 1 (one) character');
+        global.alert('Your search must have only 1 (one) character');
+        return null;
       }
       return `https://www.themealdb.com/api/json/v1/1/search.php?f=${search}`;
     default:
@@ -59,7 +60,8 @@ function Header({ pageName, searchEnabled }) {
       return `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${search}`;
     case 'first-letter':
       if (search.length > 1) {
-        return global.alert('Your search must have only 1 (one) character');
+        global.alert('Your search must have only 1 (one) character');
+        return null;
       }
       return `https://www.thecocktaildb.com/api/json/v1/1/search.php?f=${search}`;
     default:
@@ -69,12 +71,20 @@ function Header({ pageName, searchEnabled }) {
 
   const onClickSearch = async () => {
     if (pageName === 'Foods') {
-      const recive = await requestApi(searchFoods());
-      setDataApi(recive);
+      const respostFoods = searchFoods();
+      if (respostFoods !== null) {
+        const recive = await requestApi(respostFoods);
+        setDataApi(recive);
+        verifyQuantidade(recive.meals.length, recive.meals[0].idMeal, 'foods');
+      }
     }
     if (pageName === 'Drinks') {
-      const recive = await requestApi(searchDrinks());
-      setDataApi(recive);
+      const respostDrinks = searchDrinks();
+      if (respostDrinks !== null) {
+        const recive = await requestApi(searchDrinks());
+        setDataApi(recive);
+        verifyQuantidade(recive.drinks.length, recive.drinks[0].idDrink, 'drinks');
+      }
     }
   };
 
