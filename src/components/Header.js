@@ -69,14 +69,14 @@ function Header({ pageName, searchEnabled }) {
   const searchDrinks = () => {
     switch (filter) {
     case 'ingredient':
-      return `www.thecocktaildb.com/api/json/v1/1/search.php?i=${search}`;
+      return `https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=${search}`;
     case 'name':
-      return `www.thecocktaildb.com/api/json/v1/1/search.php?s=${search}`;
+      return `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${search}`;
     case 'first-letter':
       if (search.length > 1) {
         return global.alert('Your search must have only 1 (one) character');
       }
-      return `www.thecocktaildb.com/api/json/v1/1/search.php?f=${search}`;
+      return `https://www.thecocktaildb.com/api/json/v1/1/search.php?f=${search}`;
     default:
       return null;
     }
