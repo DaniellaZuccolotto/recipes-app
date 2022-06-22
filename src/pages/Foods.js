@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import Header from '../components/Header';
 import RecipeContext from '../provider/RecipesContext';
-import CardsRecipeFoods from '../components/CardsRecipeFoods';
+import CardsRecipe from '../components/CardsRecipe';
 
 function Foods() {
   const { cardsRecipes, dataApi } = useContext(RecipeContext);
@@ -13,10 +13,11 @@ function Foods() {
           const NUMBER_TWELVE = 12;
           if (index >= NUMBER_TWELVE) return null;
           return (
-            <CardsRecipeFoods
+            <CardsRecipe
               key={ index }
               recipes={ recipes }
               index={ index }
+              type="foods"
             />);
         })
       }
