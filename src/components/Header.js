@@ -4,12 +4,14 @@ import PropTypes from 'prop-types';
 import profileIcon from '../images/profileIcon.svg';
 import searchIcon from '../images/searchIcon.svg';
 import RecipeContext from '../provider/RecipesContext';
+import requestApi from '../helpers/requestApi';
 
 function Header({ pageName, searchEnabled }) {
   const [enableSearchText, setEneableSearchText] = useState(false);
   const history = useHistory();
-  const { searchData, setSearchData } = useContext(RecipeContext);
-  const { search } = searchData;
+  const { searchData,
+    setSearchData, setDataApi } = useContext(RecipeContext);
+  const { search, filter } = searchData;
 
   const handleChange = ({ target: { value, name } }) => {
     setSearchData((prevState) => ({
@@ -31,6 +33,64 @@ function Header({ pageName, searchEnabled }) {
       filter: '',
     });
     return setEneableSearchText(true);
+  };
+
+  const searchFoods = () => {
+    switch (filter) {
+    case 'ingredient':
+      return `https://www.themealdb.com/api/json/v1/1/filter.php?i=${search}`;
+    case 'name':
+      return `https://www.themealdb.com/api/json/v1/1/search.php?s=${search}`;
+    case 'first-letter':
+      if (search.length > 1) {
+        return global.alert('Your search must have only 1 (one) character');
+      }
+      return `https://www.themealdb.com/api/json/v1/1/search.php?f=${search}`;
+    default:
+      return null;
+    }
+    // let endPoint = '';
+    // if (filter === 'ingredient') {
+    //   endPoint = `https://www.themealdb.com/api/json/v1/1/filter.php?i=${search}`;
+    // }
+    // if (filter === 'name') {
+    //   endPoint = `https://www.themealdb.com/api/json/v1/1/search.php?s=${search}`;
+    // }
+    // if (filter === 'first-letter') {
+    //   if (search.length > 1) {
+    //     global.alert('Your search must have only 1 (one) character');
+    //   } else {
+    //     endPoint = `https://www.themealdb.com/api/json/v1/1/search.php?f=${search}`;
+    //   }
+    // }
+    // return endPoint;
+  };
+
+  const searchDrinks = () => {
+    switch (filter) {
+    case 'ingredient':
+      return `www.thecocktaildb.com/api/json/v1/1/search.php?i=${search}`;
+    case 'name':
+      return `www.thecocktaildb.com/api/json/v1/1/search.php?s=${search}`;
+    case 'first-letter':
+      if (search.length > 1) {
+        return global.alert('Your search must have only 1 (one) character');
+      }
+      return `www.thecocktaildb.com/api/json/v1/1/search.php?f=${search}`;
+    default:
+      return null;
+    }
+  };
+
+  const onClickSearch = async () => {
+    if (pageName === 'Foods') {
+      const recive = await requestApi(searchFoods());
+      setDataApi(recive);
+    }
+    if (pageName === 'Drinks') {
+      const recive = await requestApi(searchDrinks());
+      setDataApi(recive);
+    }
   };
 
   return (
@@ -103,6 +163,7 @@ function Header({ pageName, searchEnabled }) {
             <button
               type="button"
               data-testid="exec-search-btn"
+              onClick={ onClickSearch }
             >
               Search
             </button>

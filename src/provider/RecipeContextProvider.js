@@ -13,11 +13,15 @@ function RecipeContextProvider({ children }) {
     filter: '',
   });
 
+  const [dataApi, setDataApi] = useState([]);
+
   const contextValue = {
     loginData,
     setLoginData,
     searchData,
     setSearchData,
+    dataApi,
+    setDataApi,
   };
 
   return (
