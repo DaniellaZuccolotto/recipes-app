@@ -17,9 +17,13 @@ function RecipeContextProvider({ children }) {
 
   const [dataApi, setDataApi] = useState([]);
 
+  const [cardsRecipes, setCardsRecipes] = useState(false);
+
   const verifyQuantidade = (tamanho, id, type) => {
     if (tamanho === 1) {
       history.push(`/${type}/${id}`);
+    } else {
+      setCardsRecipes(true);
     }
   };
 
@@ -31,6 +35,7 @@ function RecipeContextProvider({ children }) {
     dataApi,
     setDataApi,
     verifyQuantidade,
+    cardsRecipes,
   };
 
   return (
