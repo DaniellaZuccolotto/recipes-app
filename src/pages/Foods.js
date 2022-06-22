@@ -5,7 +5,6 @@ import CardsRecipeFoods from '../components/CardsRecipeFoods';
 
 function Foods() {
   const { cardsRecipes, dataApi } = useContext(RecipeContext);
-  console.log(dataApi);
   return (
     <div>
       <Header pageName="Foods" />

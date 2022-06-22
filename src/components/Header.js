@@ -74,6 +74,9 @@ function Header({ pageName, searchEnabled }) {
       const respostFoods = searchFoods();
       if (respostFoods !== null) {
         const recive = await requestApi(respostFoods);
+        if (recive.meals === null) {
+          return global.alert('Sorry, we haven\'t found any recipes for these filters.');
+        }
         setDataApi(recive);
         verifyQuantidade(recive.meals.length, recive.meals[0].idMeal, 'foods');
       }
@@ -81,7 +84,10 @@ function Header({ pageName, searchEnabled }) {
     if (pageName === 'Drinks') {
       const respostDrinks = searchDrinks();
       if (respostDrinks !== null) {
-        const recive = await requestApi(searchDrinks());
+        const recive = await requestApi(respostDrinks);
+        if (recive.drinks === null) {
+          return global.alert('Sorry, we haven\'t found any recipes for these filters.');
+        }
         setDataApi(recive);
         verifyQuantidade(recive.drinks.length, recive.drinks[0].idDrink, 'drinks');
       }
