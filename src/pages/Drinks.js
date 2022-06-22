@@ -6,6 +6,7 @@ import requestApi from '../helpers/requestApi';
 function Drinks() {
   const { dataApi } = useContext(RecipeContext);
   const [drinks, setDrinks] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   const findDrinks = async () => {
     const FOOD_LIST_LENGTH = 12;
@@ -15,13 +16,36 @@ function Drinks() {
     setDrinks(first12Foods);
   };
 
+  const drinkCateg = async () => {
+    const DRINK_CATEG_LENGTH = 5;
+    const URL = 'https://www.thecocktaildb.com/api/json/v1/1/list.php?c=list';
+    const categList = await requestApi(URL);
+    const firstFive = await categList.drinks.slice(0, DRINK_CATEG_LENGTH);
+    setCategories(firstFive);
+  };
+
   useEffect(() => {
     findDrinks();
+    drinkCateg();
   }, []);
 
   return (
     <div>
       <Header pageName="Drinks" />
+      <div>
+        {
+          categories.map(({ strCategory }) => (
+            <button
+              type="button"
+              name={ strCategory }
+              key={ strCategory }
+              data-testid={ `${strCategory}-category-filter` }
+            >
+              { strCategory }
+            </button>
+          ))
+        }
+      </div>
       <section>
         {
           dataApi.length === 0 && drinks.map(({ strDrinkThumb, strDrink }, id) => (
