@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 function CardsRecipe({ recipes, index, type }) {
+  console.log(recipes);
   return (
     <div>
       {

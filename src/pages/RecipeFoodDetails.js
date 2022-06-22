@@ -1,8 +1,12 @@
 import React from 'react';
+import RecipeProgress from './RecipeProgress';
 
 function RecipeFoodDetails() {
   return (
-    <div>RecipeFoodDetails</div>
+    <div>
+      RecipeFoodDetails
+      <RecipeProgress />
+    </div>
   );
 }
 
