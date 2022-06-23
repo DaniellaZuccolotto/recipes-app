@@ -1,3 +1,9 @@
+.footer {
+  bottom: 0;
+  position: fixed;
+}
+
+/*
 .meals {
   align-items: center;
   background: #0fa36b;
@@ -15,7 +21,7 @@
   max-height: 80vh;
 }
 
-/*
+
 #iceLeft {
   animation: clink .8s infinite ease;
   opacity: 0.6;
@@ -27,9 +33,9 @@
   opacity: 0.6;
   transform-origin: 60px 78px;
 }
-*/
 
-.meals > .logo {
+
+ .meals > .logo {
   animation: shake 1.5s infinite ease;
   color: aliceblue;
   font-family: Montserrat , sans-serif;
@@ -65,4 +71,4 @@
   100% {
     transform: rotate(-10deg);
   }
-}
+} */
