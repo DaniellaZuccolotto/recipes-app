@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import RecipeContext from './RecipesContext';
 
 function RecipeContextProvider({ children }) {
+  const history = useHistory();
   const [loginData, setLoginData] = useState({
     email: '',
     password: '',
@@ -15,6 +17,16 @@ function RecipeContextProvider({ children }) {
 
   const [dataApi, setDataApi] = useState([]);
 
+  const [cardsRecipes, setCardsRecipes] = useState(false);
+
+  const verifyQuantidade = (tamanho, id, type) => {
+    if (tamanho === 1) {
+      history.push(`/${type}/${id}`);
+    } else {
+      setCardsRecipes(true);
+    }
+  };
+
   const contextValue = {
     loginData,
     setLoginData,
@@ -22,6 +34,8 @@ function RecipeContextProvider({ children }) {
     setSearchData,
     dataApi,
     setDataApi,
+    verifyQuantidade,
+    cardsRecipes,
   };
 
   return (
