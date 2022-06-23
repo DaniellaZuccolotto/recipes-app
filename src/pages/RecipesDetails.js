@@ -21,37 +21,6 @@ function RecipesDetails() {
     return setRecipe('drink');
   };
 
-  const getRecipeInAPI = async () => {
-    if (recipe === 'food') {
-      const URL = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`;
-      const food = await requestApi(URL);
-      const actualFood = food.meals[0];
-      const foodDetail = {
-        name: actualFood.strMeal,
-        category: actualFood.strCategory,
-        instructions: actualFood.strInstructions,
-        video: actualFood.strYoutube,
-        img: actualFood.strMealThumb,
-      };
-      setApiReturn(actualFood);
-      return setDetails(foodDetail);
-    }
-    if (recipe === 'drink') {
-      const URL = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`;
-      const drink = await requestApi(URL);
-      const actualDrink = drink.drinks[0];
-      const drinkDetail = {
-        name: actualDrink.strDrink,
-        category: actualDrink.strCategory,
-        instructions: actualDrink.strInstructions,
-        video: actualDrink.strVideo,
-        img: actualDrink.strDrinkThumb,
-      };
-      setApiReturn(actualDrink);
-      return setDetails(drinkDetail);
-    }
-  };
-
   const GetIngredient = () => {
     console.log(apiReturn);
     if (apiReturn !== '') {
@@ -78,8 +47,39 @@ function RecipesDetails() {
     WhitchRecipe();
   });
   useEffect(() => {
+    const getRecipeInAPI = async () => {
+      if (recipe === 'food') {
+        const URL = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`;
+        const food = await requestApi(URL);
+        const actualFood = food.meals[0];
+        const foodDetail = {
+          name: actualFood.strMeal,
+          category: actualFood.strCategory,
+          instructions: actualFood.strInstructions,
+          video: actualFood.strYoutube,
+          img: actualFood.strMealThumb,
+        };
+        setApiReturn(actualFood);
+        return setDetails(foodDetail);
+      }
+      if (recipe === 'drink') {
+        const URL = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`;
+        const drink = await requestApi(URL);
+        const actualDrink = drink.drinks[0];
+        const drinkDetail = {
+          name: actualDrink.strDrink,
+          category: actualDrink.strCategory,
+          instructions: actualDrink.strInstructions,
+          video: actualDrink.strVideo,
+          img: actualDrink.strDrinkThumb,
+        };
+        setApiReturn(actualDrink);
+        return setDetails(drinkDetail);
+      }
+    };
+
     getRecipeInAPI();
-  }, [recipe]);
+  }, [recipe, id]);
 
   const onClickFavorite = () => {
     if (heart === whiteHeartIcon) {
