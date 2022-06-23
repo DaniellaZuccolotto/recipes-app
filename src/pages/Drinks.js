@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import requestApi from '../helpers/requestApi';
 import Header from '../components/Header';
 import RecipeContext from '../provider/RecipesContext';
@@ -81,24 +80,14 @@ function Drinks() {
       </div>
       <section>
         {
-          dataApi.length === 0 && drinks.map(
-            ({ strDrinkThumb, strDrink, idDrink }, id) => (
-              <div key={ strDrink } data-testid={ `${id}-recipe-card` }>
-                <Link to={ `/drinks/${idDrink}` }>
-                  <img
-                    src={ strDrinkThumb }
-                    alt={ strDrink }
-                    data-testid={ `${id}-card-img` }
-                  />
-                  <p
-                    data-testid={ `${id}-card-name` }
-                  >
-                    { strDrink }
-                  </p>
-                </Link>
-              </div>
-            ),
-          )
+          dataApi.length === 0 && drinks.map((recipes, index) => (
+            <CardsRecipe
+              key={ index }
+              recipes={ recipes }
+              index={ index }
+              type="drinks"
+            />
+          ))
         }
         {
           cardsRecipes && dataApi.drinks.map((recipes, index) => {
