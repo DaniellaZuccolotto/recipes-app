@@ -1,14 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import requestApi from '../helpers/requestApi';
 import Header from '../components/Header';
 import RecipeContext from '../provider/RecipesContext';
-import requestApi from '../helpers/requestApi';
+import Footer from '../components/Footer';
+import CardsRecipe from '../components/CardsRecipe';
 
 const FOOD_LIST_LENGTH = 12;
 const DRINK_CATEG_LENGTH = 5;
 
 function Drinks() {
-  const { dataApi } = useContext(RecipeContext);
+  const { dataApi, cardsRecipes } = useContext(RecipeContext);
   const [drinks, setDrinks] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCat, setSelectedCat] = useState('');
@@ -98,7 +100,20 @@ function Drinks() {
             ),
           )
         }
+        {
+          cardsRecipes && dataApi.drinks.map((recipes, index) => {
+            if (index >= FOOD_LIST_LENGTH) return null;
+            return (
+              <CardsRecipe
+                key={ index }
+                recipes={ recipes }
+                index={ index }
+                type="drinks"
+              />);
+          })
+        }
       </section>
+      <Footer />
     </div>
   );
 }
