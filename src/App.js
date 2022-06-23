@@ -16,6 +16,7 @@ import ExploreFoodsNationalities from './pages/ExploreFoodsNationalities';
 import Profile from './pages/Profile';
 import DoneRecipes from './pages/DoneRecipes';
 import FavoriteRecipes from './pages/FavoriteRecipes';
+import RecipesDetails from './pages/RecipesDetails';
 
 function App() {
   return (
@@ -44,6 +45,14 @@ function App() {
           exact
           path="/explore/foods/nationalities"
           component={ ExploreFoodsNationalities }
+        />
+        <Route
+          path="/foods/:id"
+          component={ RecipesDetails }
+        />
+        <Route
+          path="/drinks/:id"
+          component={ RecipesDetails }
         />
         <Route><h1>Pagina não encontrada</h1></Route>
       </Switch>
