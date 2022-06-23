@@ -66,9 +66,10 @@ function RecipesDetails() {
         const URL = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`;
         const drink = await requestApi(URL);
         const actualDrink = drink.drinks[0];
+        console.log(actualDrink);
         const drinkDetail = {
           name: actualDrink.strDrink,
-          category: actualDrink.strCategory,
+          category: actualDrink.strAlcoholic,
           instructions: actualDrink.strInstructions,
           video: actualDrink.strVideo,
           img: actualDrink.strDrinkThumb,
