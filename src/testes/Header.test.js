@@ -4,11 +4,9 @@ import React from 'react';
 import App from '../App';
 import renderWithRouter from './helpers/renderWithRouter';
 
-afterEach(() => {
-  jest.clearAllMocks();
-});
-
 describe('Testa o componente Header', () => {
+  beforeEach(() => jest.fn().mockReset());
+
   test('Verifica se o Header tem o icone de profile, search e o page title', () => {
     const { history } = renderWithRouter(<App />);
     history.push('/foods');
@@ -86,7 +84,7 @@ describe('Testa o componente Header', () => {
     history.push('/foods');
 
     global.fetch = jest.fn(() => Promise.resolve({
-      json: () => Promise.resolve([]),
+      json: () => Promise.resolve({ meals: [1, 2] }),
     }));
 
     const searchIcon = screen.getByRole('button', {
@@ -97,7 +95,7 @@ describe('Testa o componente Header', () => {
     userEvent.type(searchText, 'butter');
     const searchBtn = screen.getByRole('button', { name: 'Search' });
     userEvent.click(searchBtn);
-    expect(global.fetch).toHaveBeenCalledWith(null);
+    expect(global.fetch).toHaveBeenCalledTimes(2);
 
     history.push('/foods');
     const ingredientFilter = screen.getByRole('radio', { name: /ingredient/i });
@@ -135,18 +133,24 @@ describe('Testa o componente Header', () => {
     const alertMsg = 'Your search must have only 1 (one) character';
     expect(global.alert).toHaveBeenCalledWith(alertMsg);
   });
+
   test('Verificar se é chamado o endPoint correto da api de Drinks', () => {
     const { history } = renderWithRouter(<App />);
     history.push('/drinks');
     const searchIcon = screen.getByRole('button', {
       name: /open-search/i,
     });
+
+    global.fetch = jest.fn(() => Promise.resolve({
+      json: () => Promise.resolve({ drinks: [1, 2] }),
+    }));
+
     userEvent.click(searchIcon);
     const searchText = screen.getByRole('textbox');
     userEvent.type(searchText, 'vodka');
     const searchBtn = screen.getByRole('button', { name: 'Search' });
     userEvent.click(searchBtn);
-    expect(global.fetch).toHaveBeenCalledWith(null);
+    expect(global.fetch).toBeCalledTimes(2);
 
     history.push('/drinks');
     const ingredientFilter = screen.getByRole('radio', { name: /ingredient/i });
@@ -184,4 +188,27 @@ describe('Testa o componente Header', () => {
     const alertMsg = 'Your search must have only 1 (one) character';
     expect(global.alert).toHaveBeenCalledWith(alertMsg);
   });
+
+  // test('Testa a mesnagem de alerta caso nenhuma receita seja encontrada', () => {
+  //   const { history } = renderWithRouter(<App />);
+  //   history.push('/drinks');
+
+  //   const searchIcon = screen.getByRole('button', {
+  //     name: /open-search/i,
+  //   });
+  //   userEvent.click(searchIcon);
+
+  //   const nameFilter = screen.getByRole('radio', { name: /name/i });
+  //   const searchText = screen.getByRole('textbox');
+  //   const searchBtn = screen.getByRole('button', { name: 'Search' });
+
+  //   jest.spyOn(global, 'alert').mockImplementation(() => {});
+
+  //   userEvent.type(searchText, 'lalala');
+  //   userEvent.click(nameFilter);
+  //   userEvent.click(searchBtn);
+
+  //   const alertMsg = 'Sorry, we haven\'t found any recipes for these filters.';
+  //   expect(global.alert).toHaveBeenCalledWith(alertMsg);
+  // });
 });
