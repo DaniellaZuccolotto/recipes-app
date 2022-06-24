@@ -1,18 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import shareIcon from '../images/shareIcon.svg';
 import whiteHeartIcon from '../images/whiteHeartIcon.svg';
 import blackHeartIcon from '../images/blackHeartIcon.svg';
 import requestApi from '../helpers/requestApi';
 import RecomendedCard from '../components/RecomendedCard';
+import RecipeContext from '../provider/RecipesContext';
 
 function RecipesDetails() {
+  const { inProgress, recipeInProgress } = useContext(RecipeContext);
   const [heart, setHeart] = useState(whiteHeartIcon);
   const [recipe, setRecipe] = useState('');
   const [details, setDetails] = useState('');
   const [apiReturn, setApiReturn] = useState('');
   const [recomendRecipes, setRecomendRecipes] = useState([]);
   const [isDone, setIsDone] = useState(false);
+
   const history = useHistory();
   const path = history.location.pathname;
   const id = path.replace(/[^0-9]/g, '');
@@ -53,10 +56,10 @@ function RecipesDetails() {
         setIsDone(verifica);
       }
     };
-
     WhitchRecipe();
     recipeDone();
-  }, [id, path]);
+    recipeInProgress();
+  }, [id, path, recipeInProgress]);
 
   const onClickFavorite = () => {
     if (heart === whiteHeartIcon) {
@@ -176,7 +179,7 @@ function RecipesDetails() {
             className="start-btn"
             data-testid="start-recipe-btn"
           >
-            Start Recipe
+            { inProgress }
           </button>
         )
       }

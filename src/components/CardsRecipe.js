@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
 function CardsRecipe({ recipes, index, type }) {
-  console.log(recipes);
   return (
     <div>
       {

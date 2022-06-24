@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 function RecipeProgress() {
+  const [riscar, setRiscar] = useState(false);
+
   const recipes = [{
     idMeal: '52768',
     strCategory: 'Dessert',
@@ -35,6 +37,15 @@ function RecipeProgress() {
     strMealThumb: 'https://www.themealdb.com/images/media/meals/wxywrq1468235067.jpg',
   }];
 
+  // const ingredientes = () => {
+  //   const ingredientsArray = [];
+  //   console.log(ingredientsArray);
+
+  //   // const index = 1;
+  //   // console.log(recipes[0][`strIngredient${index}`]);
+  //   return ingredientsArray;
+  // };
+
   const arrayIngredients = [
     recipes[0].strIngredient1,
     recipes[0].strIngredient2,
@@ -46,6 +57,14 @@ function RecipeProgress() {
     recipes[0].strIngredient8,
     recipes[0].strIngredient9,
   ];
+
+  const onclickChecked = ({ target }) => {
+    if (target.checked) {
+      if (target.value === target.name) { setRiscar(true); }
+    } else {
+      setRiscar(false);
+    }
+  };
 
   return (
     <main>
@@ -65,11 +84,18 @@ function RecipeProgress() {
       <p data-testid="recipe-category">{ recipes[0].strCategory }</p>
       {
         arrayIngredients.map((ingredients, i) => (
-          <label htmlFor={ ingredients } key={ i }>
+          <label
+            htmlFor={ ingredients }
+            key={ i }
+            style={ riscar ? { textDecoration: 'line-through' } : null }
+          >
             { ingredients }
             <input
               id={ ingredients }
               type="checkbox"
+              name={ ingredients }
+              value={ ingredients }
+              onClick={ onclickChecked }
             />
           </label>
         ))
