@@ -6,30 +6,33 @@ import RecipeContext from '../provider/RecipesContext';
 
 function RecipeProgress() {
   const { recipeDetails, ingredientDetails } = useContext(RecipeContext);
-  // const [riscar, setRiscar] = useState(false);
+  const [riscar, setRiscar] = useState(false);
   const [heart, setHeart] = useState(whiteHeartIcon);
 
-  console.log(ingredientDetails);
+  // pegar os valores pela API.
+  const getIngredient = () => {
+    const MAX_LENGTH = 50;
+    const ingredients = [];
+    for (let i = 1;
+      (i <= MAX_LENGTH) && (ingredientDetails[`strIngredient${i}`] !== '')
+         && (ingredientDetails[`strIngredient${i}`] !== null);
+      i += 1) {
+      ingredients.push(
+        ingredientDetails[`strIngredient${i}`] + ingredientDetails[`strMeasure${i}`],
+      );
+    }
+    return ingredients;
+  };
 
-  // const arrayIngredients = [
-  //   recipes[0].strIngredient1,
-  //   recipes[0].strIngredient2,
-  //   recipes[0].strIngredient3,
-  //   recipes[0].strIngredient4,
-  //   recipes[0].strIngredient5,
-  //   recipes[0].strIngredient6,
-  //   recipes[0].strIngredient7,
-  //   recipes[0].strIngredient8,
-  //   recipes[0].strIngredient9,
-  // ];
+  console.log(getIngredient());
 
-  // const onclickChecked = ({ target }) => {
-  //   if (target.checked) {
-  //     if (target.value === target.name) { setRiscar(true); }
-  //   } else {
-  //     setRiscar(false);
-  //   }
-  // };
+  const onclickChecked = ({ target }) => {
+    if (target.checked) {
+      if (target.value === target.name) { setRiscar(true); }
+    } else {
+      setRiscar(false);
+    }
+  };
 
   const onClickFavorite = () => {
     if (heart === whiteHeartIcon) {
@@ -61,9 +64,10 @@ function RecipeProgress() {
         data-testid="favorite-btn"
       />
       <p data-testid="recipe-category">{ recipeDetails.category }</p>
-      {/* {
-        arrayIngredients.map((ingredients, i) => (
+      {
+        getIngredient().map((ingredients, i) => (
           <label
+            data-testid={ `${i}-ingredient-step` }
             htmlFor={ ingredients }
             key={ i }
             style={ riscar ? { textDecoration: 'line-through' } : null }
@@ -78,7 +82,7 @@ function RecipeProgress() {
             />
           </label>
         ))
-      } */}
+      }
       <p data-testid="instructions">{ recipeDetails.instructions }</p>
       <button type="button" data-testid="finish-recipe-btn">
         Finalizar
