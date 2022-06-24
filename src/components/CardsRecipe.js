@@ -6,7 +6,7 @@ function CardsRecipe({ recipes, index, type }) {
   return (
     <div>
       {
-        type === 'drinks' ? (
+        type === 'drink' ? (
           <main data-testid={ `${index}-recipe-card` }>
             <Link to={ `/drinks/${recipes.idDrink}` }>
               <h3 data-testid={ `${index}-card-name` }>{ recipes.strDrink }</h3>

@@ -43,7 +43,7 @@ function RecipesDetails() {
       if (path.includes('foods')) {
         return setRecipe('food');
       }
-      return setRecipe('drinks');
+      return setRecipe('drink');
     };
 
     const recipeDone = () => {
@@ -54,15 +54,43 @@ function RecipesDetails() {
       }
     };
 
+    const recipeFavorite = () => {
+      const favoriteRecipes = JSON.parse(localStorage.getItem('favoriteRecipes'));
+      if (favoriteRecipes) {
+        const verifica = favoriteRecipes.some((rec) => rec.id === id);
+        setHeart(verifica ? blackHeartIcon : whiteHeartIcon);
+      }
+    };
+
     WhitchRecipe();
     recipeDone();
+    recipeFavorite();
   }, [id, path]);
 
-  const onClickFavorite = () => {
+  const onClickFavorite = ({ target: { value } }) => {
+    const parseValue = JSON.parse(value);
+    const favoriteRecipes = JSON.parse(localStorage.getItem('favoriteRecipes'));
     if (heart === whiteHeartIcon) {
-      return setHeart(blackHeartIcon);
+      const newFav = {
+        id: parseValue.idMeal || parseValue.idDrink,
+        type: recipe,
+        nationality: parseValue.strArea || '',
+        category: parseValue.strCategory || '',
+        alcoholicOrNot: parseValue.strAlcoholic || '',
+        name: parseValue.strMeal || parseValue.strDrink,
+        image: parseValue.strMealThumb || parseValue.strDrinkThumb,
+      };
+
+      const newFavList = favoriteRecipes ? [...favoriteRecipes, newFav] : [newFav];
+      localStorage.setItem('favoriteRecipes', JSON.stringify(newFavList));
+      setHeart(blackHeartIcon);
+    } else {
+      const newReduceFavorites = favoriteRecipes
+        .filter(({ id: foodId }) => foodId !== id);
+
+      localStorage.setItem('favoriteRecipes', JSON.stringify(newReduceFavorites));
+      setHeart(whiteHeartIcon);
     }
-    return setHeart(whiteHeartIcon);
   };
 
   useEffect(() => {
@@ -81,7 +109,7 @@ function RecipesDetails() {
         setApiReturn(actualFood);
         return setDetails(foodDetail);
       }
-      if (recipe === 'drinks') {
+      if (recipe === 'drink') {
         const URL = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`;
         const drink = await requestApi(URL);
         const actualDrink = drink.drinks[0];
@@ -138,8 +166,9 @@ function RecipesDetails() {
       <input
         src={ heart }
         type="image"
-        alt="Botão de compartilhamento"
+        alt="Botão de favorito"
         onClick={ onClickFavorite }
+        value={ JSON.stringify(apiReturn) }
         data-testid="favorite-btn"
       />
       <h2>Ingredients</h2>
