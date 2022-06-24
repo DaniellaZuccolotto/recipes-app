@@ -2,14 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-function CardsRecipe({ recipes, index, type }) {
+function RecomendedCard({ recipes, index, type }) {
   return (
     <div>
       {
         type === 'drinks' ? (
           <main data-testid={ `${index}-recipe-card` }>
             <Link to={ `/drinks/${recipes.idDrink}` }>
-              <h3 data-testid={ `${index}-card-name` }>{ recipes.strDrink }</h3>
+              <h3 data-testid={ `${index}-recomendation-title` }>{ recipes.strDrink }</h3>
               <img
                 src={ recipes.strDrinkThumb }
                 alt={ recipes.strDrink }
@@ -21,7 +21,7 @@ function CardsRecipe({ recipes, index, type }) {
         ) : (
           <main data-testid={ `${index}-recipe-card` }>
             <Link to={ `/foods/${recipes.idMeal}` }>
-              <h3 data-testid={ `${index}-card-name` }>{ recipes.strMeal }</h3>
+              <h3 data-testid={ `${index}-recomendation-title` }>{ recipes.strMeal }</h3>
               <img
                 src={ recipes.strMealThumb }
                 alt={ recipes.strMeal }
@@ -37,10 +37,10 @@ function CardsRecipe({ recipes, index, type }) {
   );
 }
 
-CardsRecipe.propTypes = {
+RecomendedCard.propTypes = {
   recipes: PropTypes.objectOf(PropTypes.any).isRequired,
   index: PropTypes.number.isRequired,
   type: PropTypes.string.isRequired,
 };
 
-export default CardsRecipe;
+export default RecomendedCard;

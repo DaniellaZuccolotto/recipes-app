@@ -4,7 +4,7 @@ import shareIcon from '../images/shareIcon.svg';
 import whiteHeartIcon from '../images/whiteHeartIcon.svg';
 import blackHeartIcon from '../images/blackHeartIcon.svg';
 import requestApi from '../helpers/requestApi';
-import CardsRecipe from '../components/CardsRecipe';
+import RecomendedCard from '../components/RecomendedCard';
 
 function RecipesDetails() {
   const [heart, setHeart] = useState(whiteHeartIcon);
@@ -12,16 +12,10 @@ function RecipesDetails() {
   const [details, setDetails] = useState('');
   const [apiReturn, setApiReturn] = useState('');
   const [recomendRecipes, setRecomendRecipes] = useState([]);
+  const [isDone, setIsDone] = useState(false);
   const history = useHistory();
   const path = history.location.pathname;
   const id = path.replace(/[^0-9]/g, '');
-
-  const WhitchRecipe = () => {
-    if (path.includes('foods')) {
-      return setRecipe('food');
-    }
-    return setRecipe('drinks');
-  };
 
   const GetIngredient = () => {
     if (apiReturn !== '') {
@@ -39,14 +33,30 @@ function RecipesDetails() {
           data-testid={ `${index}-ingredient-name-and-measure` }
         >
           {value}
-
         </li>
       ));
     }
   };
+
   useEffect(() => {
+    const WhitchRecipe = () => {
+      if (path.includes('foods')) {
+        return setRecipe('food');
+      }
+      return setRecipe('drinks');
+    };
+
+    const recipeDone = () => {
+      const doneRecipes = JSON.parse(localStorage.getItem('doneRecipes'));
+      if (doneRecipes) {
+        const verifica = doneRecipes.some((rec) => rec.id === id);
+        setIsDone(verifica);
+      }
+    };
+
     WhitchRecipe();
-  });
+    recipeDone();
+  }, [id, path]);
 
   const onClickFavorite = () => {
     if (heart === whiteHeartIcon) {
@@ -108,7 +118,7 @@ function RecipesDetails() {
     };
     FindRecipes();
   }, [path]);
-  console.log(recomendRecipes);
+
   return (
     <main>
       <img
@@ -142,18 +152,16 @@ function RecipesDetails() {
       <section className="instructions">
         <p data-testid="instructions">{details.instructions}</p>
       </section>
-
       <h2>Video</h2>
       <iframe data-testid="video" src={ details.video } title={ details.name } />
       <h2>Recommended</h2>
       <section className="recommended">
-        {/*  <p data-testid="0-recomendation-card">Recomendados</p> */}
         { recomendRecipes.map((recipes, index) => (
           <div
             key={ index }
             data-testid={ `${index}-recomendation-card` }
           >
-            <CardsRecipe
+            <RecomendedCard
               recipes={ recipes }
               index={ index }
               type={ recipe === 'food' ? 'drinks' : 'food' }
@@ -161,9 +169,17 @@ function RecipesDetails() {
           </div>
         )) }
       </section>
-      <button type="button" data-testid="start-recipe-btn">
-        Start Recipe
-      </button>
+      {
+        !isDone && (
+          <button
+            type="button"
+            className="start-btn"
+            data-testid="start-recipe-btn"
+          >
+            Start Recipe
+          </button>
+        )
+      }
     </main>
   );
 }
