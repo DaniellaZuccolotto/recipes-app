@@ -20,6 +20,8 @@ function RecipeContextProvider({ children }) {
   const [dataApi, setDataApi] = useState([]);
   const [inProgress, setInProgress] = useState('Start Recipe');
   const [cardsRecipes, setCardsRecipes] = useState(false);
+  const [recipeDetails, setRecipeDetails] = useState({});
+  const [ingredientDetails, setIngredientDetails] = useState([]);
 
   const verifyQuantidade = (tamanho, id, type) => {
     if (tamanho === 1) {
@@ -47,6 +49,11 @@ function RecipeContextProvider({ children }) {
     }
   };
 
+  const getRecipes = (details, allApi) => {
+    setRecipeDetails(details);
+    setIngredientDetails(allApi);
+  };
+
   const contextValue = {
     loginData,
     setLoginData,
@@ -59,6 +66,9 @@ function RecipeContextProvider({ children }) {
     recipeInProgress,
     inProgress,
     setInProgress,
+    getRecipes,
+    recipeDetails,
+    ingredientDetails,
   };
 
   return (
