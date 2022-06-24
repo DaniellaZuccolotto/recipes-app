@@ -4,25 +4,20 @@ import shareIcon from '../images/shareIcon.svg';
 import whiteHeartIcon from '../images/whiteHeartIcon.svg';
 import blackHeartIcon from '../images/blackHeartIcon.svg';
 import requestApi from '../helpers/requestApi';
+import RecomendedCard from '../components/RecomendedCard';
 
 function RecipesDetails() {
   const [heart, setHeart] = useState(whiteHeartIcon);
   const [recipe, setRecipe] = useState('');
   const [details, setDetails] = useState('');
   const [apiReturn, setApiReturn] = useState('');
+  const [recomendRecipes, setRecomendRecipes] = useState([]);
+  const [isDone, setIsDone] = useState(false);
   const history = useHistory();
   const path = history.location.pathname;
   const id = path.replace(/[^0-9]/g, '');
 
-  const WhitchRecipe = () => {
-    if (path.includes('foods')) {
-      return setRecipe('food');
-    }
-    return setRecipe('drink');
-  };
-
   const GetIngredient = () => {
-    console.log(apiReturn);
     if (apiReturn !== '') {
       const MAX_LENGTH = 50;
       const ingredients = [];
@@ -38,14 +33,38 @@ function RecipesDetails() {
           data-testid={ `${index}-ingredient-name-and-measure` }
         >
           {value}
-
         </li>
       ));
     }
   };
+
   useEffect(() => {
+    const WhitchRecipe = () => {
+      if (path.includes('foods')) {
+        return setRecipe('food');
+      }
+      return setRecipe('drinks');
+    };
+
+    const recipeDone = () => {
+      const doneRecipes = JSON.parse(localStorage.getItem('doneRecipes'));
+      if (doneRecipes) {
+        const verifica = doneRecipes.some((rec) => rec.id === id);
+        setIsDone(verifica);
+      }
+    };
+
     WhitchRecipe();
-  });
+    recipeDone();
+  }, [id, path]);
+
+  const onClickFavorite = () => {
+    if (heart === whiteHeartIcon) {
+      return setHeart(blackHeartIcon);
+    }
+    return setHeart(whiteHeartIcon);
+  };
+
   useEffect(() => {
     const getRecipeInAPI = async () => {
       if (recipe === 'food') {
@@ -62,11 +81,10 @@ function RecipesDetails() {
         setApiReturn(actualFood);
         return setDetails(foodDetail);
       }
-      if (recipe === 'drink') {
+      if (recipe === 'drinks') {
         const URL = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`;
         const drink = await requestApi(URL);
         const actualDrink = drink.drinks[0];
-        console.log(actualDrink);
         const drinkDetail = {
           name: actualDrink.strDrink,
           category: actualDrink.strAlcoholic,
@@ -82,18 +100,32 @@ function RecipesDetails() {
     getRecipeInAPI();
   }, [recipe, id]);
 
-  const onClickFavorite = () => {
-    if (heart === whiteHeartIcon) {
-      return setHeart(blackHeartIcon);
-    }
-    return setHeart(whiteHeartIcon);
-  };
+  useEffect(() => {
+    const FindRecipes = async () => {
+      const RECIPE_LIST_LENGTH = 6;
+      if (path.includes('drinks')) {
+        const URL = 'https://www.themealdb.com/api/json/v1/1/search.php?s=';
+        const foodList = await requestApi(URL);
+        const first6Foods = await foodList.meals.slice(0, RECIPE_LIST_LENGTH);
+        setRecomendRecipes(first6Foods);
+      }
+      if (path.includes('foods')) {
+        const URL = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=';
+        const drinkList = await requestApi(URL);
+        const first6Drink = await drinkList.drinks.slice(0, RECIPE_LIST_LENGTH);
+        setRecomendRecipes(first6Drink);
+      }
+    };
+    FindRecipes();
+  }, [path]);
+
   return (
     <main>
       <img
         data-testid="recipe-photo"
         alt="Foto da Receita"
         src={ details.img }
+        style={ { width: 100 } }
       />
       <h1 data-testid="recipe-title">{details.name}</h1>
       <h2 data-testid="recipe-category">{details.category}</h2>
@@ -120,16 +152,34 @@ function RecipesDetails() {
       <section className="instructions">
         <p data-testid="instructions">{details.instructions}</p>
       </section>
-
       <h2>Video</h2>
       <iframe data-testid="video" src={ details.video } title={ details.name } />
       <h2>Recommended</h2>
       <section className="recommended">
-        <p data-testid="0-recomendation-card">Recomendados</p>
+        { recomendRecipes.map((recipes, index) => (
+          <div
+            key={ index }
+            data-testid={ `${index}-recomendation-card` }
+          >
+            <RecomendedCard
+              recipes={ recipes }
+              index={ index }
+              type={ recipe === 'food' ? 'drinks' : 'food' }
+            />
+          </div>
+        )) }
       </section>
-      <button type="button" data-testid="start-recipe-btn">
-        Start Recipe
-      </button>
+      {
+        !isDone && (
+          <button
+            type="button"
+            className="start-btn"
+            data-testid="start-recipe-btn"
+          >
+            Start Recipe
+          </button>
+        )
+      }
     </main>
   );
 }
