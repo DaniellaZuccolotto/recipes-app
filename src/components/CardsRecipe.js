@@ -20,7 +20,7 @@ function CardsRecipe({ recipes, index, type }) {
           </main>
         ) : (
           <main data-testid={ `${index}-recipe-card` }>
-            <Link to={ `/drinks/${recipes.idMeal}` }>
+            <Link to={ `/foods/${recipes.idMeal}` }>
               <h3 data-testid={ `${index}-card-name` }>{ recipes.strMeal }</h3>
               <img
                 src={ recipes.strMealThumb }
