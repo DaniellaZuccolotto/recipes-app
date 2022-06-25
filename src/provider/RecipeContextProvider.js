@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import RecipeContext from './RecipesContext';
+import requestApi from '../helpers/requestApi';
 
 function RecipeContextProvider({ children }) {
   const history = useHistory();
@@ -21,7 +22,7 @@ function RecipeContextProvider({ children }) {
   const [inProgress, setInProgress] = useState('Start Recipe');
   const [cardsRecipes, setCardsRecipes] = useState(false);
   const [recipeDetails, setRecipeDetails] = useState({});
-  const [ingredientDetails, setIngredientDetails] = useState([]);
+  const [ingredientsDetails, setIngredientsDetails] = useState({});
 
   const verifyQuantidade = (tamanho, id, type) => {
     if (tamanho === 1) {
@@ -49,9 +50,35 @@ function RecipeContextProvider({ children }) {
     }
   };
 
-  const getRecipes = (details, allApi) => {
-    setRecipeDetails(details);
-    setIngredientDetails(allApi);
+  const getRecipeInAPI = async (idPath2) => {
+    if (path.includes('foods')) {
+      const URL = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${idPath2}`;
+      const food = await requestApi(URL);
+      const actualFood = await food.meals[0];
+      const foodDetail = {
+        name: actualFood.strMeal,
+        category: actualFood.strCategory,
+        instructions: actualFood.strInstructions,
+        video: actualFood.strYoutube,
+        img: actualFood.strMealThumb,
+      };
+      setRecipeDetails(foodDetail);
+      setIngredientsDetails(actualFood);
+    }
+    if (path.includes('drinks')) {
+      const URL = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${idPath2}`;
+      const drink = await requestApi(URL);
+      const actualDrink = await drink.drinks[0];
+      const drinkDetail = {
+        name: actualDrink.strDrink,
+        category: actualDrink.strAlcoholic,
+        instructions: actualDrink.strInstructions,
+        video: actualDrink.strVideo,
+        img: actualDrink.strDrinkThumb,
+      };
+      setRecipeDetails(drinkDetail);
+      setIngredientsDetails(actualDrink);
+    }
   };
 
   const contextValue = {
@@ -66,9 +93,9 @@ function RecipeContextProvider({ children }) {
     recipeInProgress,
     inProgress,
     setInProgress,
-    getRecipes,
     recipeDetails,
-    ingredientDetails,
+    getRecipeInAPI,
+    ingredientsDetails,
   };
 
   return (

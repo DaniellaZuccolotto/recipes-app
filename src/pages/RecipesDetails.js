@@ -8,7 +8,7 @@ import RecomendedCard from '../components/RecomendedCard';
 import RecipeContext from '../provider/RecipesContext';
 
 function RecipesDetails() {
-  const { inProgress, recipeInProgress, getRecipes } = useContext(RecipeContext);
+  const { inProgress, recipeInProgress } = useContext(RecipeContext);
   const [heart, setHeart] = useState(whiteHeartIcon);
   const [recipe, setRecipe] = useState('');
   const [details, setDetails] = useState('');
@@ -82,7 +82,6 @@ function RecipesDetails() {
           img: actualFood.strMealThumb,
         };
         setApiReturn(actualFood);
-        getRecipes(foodDetail, food.meals[0]);
         return setDetails(foodDetail);
       }
       if (recipe === 'drinks') {
@@ -97,7 +96,6 @@ function RecipesDetails() {
           img: actualDrink.strDrinkThumb,
         };
         setApiReturn(actualDrink);
-        getRecipes(drinkDetail, drink.drinks[0]);
         return setDetails(drinkDetail);
       }
     };
