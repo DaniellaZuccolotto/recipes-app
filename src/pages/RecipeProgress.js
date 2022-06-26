@@ -1,19 +1,19 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import shareIcon from '../images/shareIcon.svg';
 import whiteHeartIcon from '../images/whiteHeartIcon.svg';
 import blackHeartIcon from '../images/blackHeartIcon.svg';
-import RecipeContext from '../provider/RecipesContext';
+import requestApi from '../helpers/requestApi';
 
 function RecipeProgress() {
-  const { recipeDetails, getRecipeInAPI, ingredientsDetails } = useContext(RecipeContext);
   const [riscar, setRiscar] = useState(false);
   const [heart, setHeart] = useState(whiteHeartIcon);
+  const [recipeDetails, setRecipeDetails] = useState({});
+  const [ingredientsDetails, setIngredientsDetails] = useState({});
   const history = useHistory();
   const path = history.location.pathname;
   const idPath = path.replace(/[^0-9]/g, '');
 
-  // pegar os valores pela API.
   const getIngredient = () => {
     const MAX_LENGTH = 50;
     const ingredients = [];
@@ -31,8 +31,39 @@ function RecipeProgress() {
   };
 
   useEffect(() => {
-    getRecipeInAPI(idPath);
-  }, []);
+    const getRecipeInAPI = async () => {
+      if (path.includes('foods')) {
+        const URL = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${idPath}`;
+        const food = await requestApi(URL);
+        const actualFood = await food.meals[0];
+        const foodDetail = {
+          name: actualFood.strMeal,
+          category: actualFood.strCategory,
+          instructions: actualFood.strInstructions,
+          video: actualFood.strYoutube,
+          img: actualFood.strMealThumb,
+        };
+        setRecipeDetails(foodDetail);
+        setIngredientsDetails(actualFood);
+      }
+      if (path.includes('drinks')) {
+        const URL = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${idPath}`;
+        const drink = await requestApi(URL);
+        const actualDrink = await drink.drinks[0];
+        const drinkDetail = {
+          name: actualDrink.strDrink,
+          category: actualDrink.strAlcoholic,
+          instructions: actualDrink.strInstructions,
+          video: actualDrink.strVideo,
+          img: actualDrink.strDrinkThumb,
+        };
+        setRecipeDetails(drinkDetail);
+        setIngredientsDetails(actualDrink);
+      }
+    };
+    console.log(idPath);
+    getRecipeInAPI();
+  }, [path, idPath]);
 
   const onclickChecked = ({ target }) => {
     if (target.checked) {
