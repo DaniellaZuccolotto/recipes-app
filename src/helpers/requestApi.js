@@ -4,6 +4,7 @@ async function requestApi(endPointApi) {
     const data = await response.json();
     return Object.values(data)[0];
   } catch (error) {
+    console.log('Erro de Requisição', error);
     return error;
   }
 }

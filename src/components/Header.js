@@ -26,72 +26,48 @@ function Header({ pageName, searchEnabled }) {
 
   const ChangeSearchStatus = () => {
     if (enableSearchText === true) {
-      return setEneableSearchText(false);
-    }
-    setSearchData({
-      search: '',
-      filter: '',
-    });
-    return setEneableSearchText(true);
-  };
-
-  const searchFoods = () => {
-    switch (filter) {
-    case 'ingredient':
-      return `https://www.themealdb.com/api/json/v1/1/filter.php?i=${search}`;
-    case 'name':
-      return `https://www.themealdb.com/api/json/v1/1/search.php?s=${search}`;
-    case 'first-letter':
-      if (search.length > 1) {
-        global.alert('Your search must have only 1 (one) character');
-        return null;
-      }
-      return `https://www.themealdb.com/api/json/v1/1/search.php?f=${search}`;
-    default:
-      return null;
+      setEneableSearchText(false);
+    } else {
+      setSearchData({
+        search: '',
+        filter: '',
+      });
+      setEneableSearchText(true);
     }
   };
 
-  const searchDrinks = () => {
+  const findEndPoint = (domain) => {
     switch (filter) {
     case 'ingredient':
-      return `https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=${search}`;
+      return `https://www.${domain}.com/api/json/v1/1/filter.php?i=${search}`;
     case 'name':
-      return `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${search}`;
+      return `https://www.${domain}.com/api/json/v1/1/search.php?s=${search}`;
     case 'first-letter':
-      if (search.length > 1) {
-        global.alert('Your search must have only 1 (one) character');
-        return null;
-      }
-      return `https://www.thecocktaildb.com/api/json/v1/1/search.php?f=${search}`;
+      return `https://www.${domain}.com/api/json/v1/1/search.php?f=${search}`;
     default:
       return null;
     }
   };
 
   const onClickSearch = async () => {
-    if (pageName === 'Foods') {
-      const respostFoods = searchFoods();
-      if (respostFoods !== null) {
-        const recive = await requestApi(respostFoods);
-        if (recive === null) {
-          return global.alert('Sorry, we haven\'t found any recipes for these filters.');
-        }
-        setDataApi(recive);
-        verifyQuantidade(recive.length, recive[0].idMeal, 'foods');
-      }
+    // As duas mensagens estavam aparecendo quando o retorno de recive era null
+    // Por isso essa consicional esta aqui.
+    if (search.length > 1 && filter === 'first-letter') {
+      return global.alert('Your search must have only 1 (one) character');
     }
-    if (pageName === 'Drinks') {
-      const respostDrinks = searchDrinks();
-      if (respostDrinks !== null) {
-        const recive = await requestApi(respostDrinks);
-        if (recive === null) {
-          return global.alert('Sorry, we haven\'t found any recipes for these filters.');
-        }
-        setDataApi(recive);
-        verifyQuantidade(recive.length, recive[0].idDrink, 'drinks');
-      }
+
+    const type = pageName.toLowerCase();
+    let URL;
+    if (type === 'foods') URL = findEndPoint('themealdb');
+    if (type === 'drinks') URL = findEndPoint('thecocktaildb');
+    const recive = await requestApi(URL);
+
+    if (recive === null || !recive.length) {
+      return global.alert('Sorry, we haven\'t found any recipes for these filters.');
     }
+
+    setDataApi(recive);
+    verifyQuantidade(recive.length, recive[0], type);
   };
 
   return (

@@ -90,12 +90,13 @@ function Drinks() {
         {
           recipesList
             .slice(0, DRINK_LIST_LENGTH).map((recipes, index) => (
-              <CardsRecipe
-                key={ index }
-                recipes={ recipes }
-                index={ index }
-                type="drinks"
-              />))
+              <div key={ index }>
+                <CardsRecipe
+                  recipes={ recipes }
+                  index={ index }
+                  type="drinks"
+                />
+              </div>))
         }
       </section>
       <Footer />

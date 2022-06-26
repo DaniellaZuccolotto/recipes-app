@@ -19,7 +19,8 @@ function RecipeContextProvider({ children }) {
 
   const [cardsRecipes, setCardsRecipes] = useState(false);
 
-  const verifyQuantidade = (tamanho, id, type) => {
+  const verifyQuantidade = (tamanho, recive, type) => {
+    const id = recive.idMeal || recive.idDrink;
     if (tamanho === 1) {
       history.push(`/${type}/${id}`);
     } else {
