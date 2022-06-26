@@ -36,6 +36,7 @@ function RecipeContextProvider({ children }) {
     setDataApi,
     verifyQuantidade,
     cardsRecipes,
+    setCardsRecipes,
   };
 
   return (

@@ -74,22 +74,22 @@ function Header({ pageName, searchEnabled }) {
       const respostFoods = searchFoods();
       if (respostFoods !== null) {
         const recive = await requestApi(respostFoods);
-        if (recive.meals === null) {
+        if (recive === null) {
           return global.alert('Sorry, we haven\'t found any recipes for these filters.');
         }
         setDataApi(recive);
-        verifyQuantidade(recive.meals.length, recive.meals[0].idMeal, 'foods');
+        verifyQuantidade(recive.length, recive[0].idMeal, 'foods');
       }
     }
     if (pageName === 'Drinks') {
       const respostDrinks = searchDrinks();
       if (respostDrinks !== null) {
         const recive = await requestApi(respostDrinks);
-        if (recive.drinks === null) {
+        if (recive === null) {
           return global.alert('Sorry, we haven\'t found any recipes for these filters.');
         }
         setDataApi(recive);
-        verifyQuantidade(recive.drinks.length, recive.drinks[0].idDrink, 'drinks');
+        verifyQuantidade(recive.length, recive[0].idDrink, 'drinks');
       }
     }
   };

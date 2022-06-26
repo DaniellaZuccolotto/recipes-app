@@ -6,6 +6,8 @@ import blackHeartIcon from '../images/blackHeartIcon.svg';
 import requestApi from '../helpers/requestApi';
 import RecomendedCard from '../components/RecomendedCard';
 
+const RECIPE_LIST_LENGTH = 6;
+
 function RecipesDetails() {
   const [heart, setHeart] = useState(whiteHeartIcon);
   const [recipe, setRecipe] = useState('');
@@ -41,9 +43,10 @@ function RecipesDetails() {
   useEffect(() => {
     const WhitchRecipe = () => {
       if (path.includes('foods')) {
-        return setRecipe('food');
+        setRecipe('food');
+      } else {
+        setRecipe('drink');
       }
-      return setRecipe('drink');
     };
 
     const recipeDone = () => {
@@ -95,10 +98,10 @@ function RecipesDetails() {
 
   useEffect(() => {
     const getRecipeInAPI = async () => {
-      if (recipe === 'food') {
+      if (path.includes('foods')) {
         const URL = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`;
         const food = await requestApi(URL);
-        const actualFood = food.meals[0];
+        const actualFood = food[0];
         const foodDetail = {
           name: actualFood.strMeal,
           category: actualFood.strCategory,
@@ -109,10 +112,10 @@ function RecipesDetails() {
         setApiReturn(actualFood);
         return setDetails(foodDetail);
       }
-      if (recipe === 'drink') {
+      if (path.includes('drinks')) {
         const URL = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`;
         const drink = await requestApi(URL);
-        const actualDrink = drink.drinks[0];
+        const actualDrink = drink[0];
         const drinkDetail = {
           name: actualDrink.strDrink,
           category: actualDrink.strAlcoholic,
@@ -126,22 +129,19 @@ function RecipesDetails() {
     };
 
     getRecipeInAPI();
-  }, [recipe, id]);
+  }, [recipe, id, path]);
 
   useEffect(() => {
     const FindRecipes = async () => {
-      const RECIPE_LIST_LENGTH = 6;
       if (path.includes('drinks')) {
         const URL = 'https://www.themealdb.com/api/json/v1/1/search.php?s=';
         const foodList = await requestApi(URL);
-        const first6Foods = await foodList.meals.slice(0, RECIPE_LIST_LENGTH);
-        setRecomendRecipes(first6Foods);
+        setRecomendRecipes(foodList);
       }
       if (path.includes('foods')) {
         const URL = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=';
         const drinkList = await requestApi(URL);
-        const first6Drink = await drinkList.drinks.slice(0, RECIPE_LIST_LENGTH);
-        setRecomendRecipes(first6Drink);
+        setRecomendRecipes(drinkList);
       }
     };
     FindRecipes();
@@ -185,7 +185,7 @@ function RecipesDetails() {
       <iframe data-testid="video" src={ details.video } title={ details.name } />
       <h2>Recommended</h2>
       <section className="recommended">
-        { recomendRecipes.map((recipes, index) => (
+        { recomendRecipes.slice(0, RECIPE_LIST_LENGTH).map((recipes, index) => (
           <div
             key={ index }
             data-testid={ `${index}-recomendation-card` }
@@ -193,7 +193,7 @@ function RecipesDetails() {
             <RecomendedCard
               recipes={ recipes }
               index={ index }
-              type={ recipe === 'food' ? 'drinks' : 'food' }
+              type={ recipe === 'food' ? 'drink' : 'food' }
             />
           </div>
         )) }

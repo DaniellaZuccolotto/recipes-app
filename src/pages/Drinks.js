@@ -5,38 +5,38 @@ import RecipeContext from '../provider/RecipesContext';
 import Footer from '../components/Footer';
 import CardsRecipe from '../components/CardsRecipe';
 
-const FOOD_LIST_LENGTH = 12;
+const DRINK_LIST_LENGTH = 12;
 const DRINK_CATEG_LENGTH = 5;
 
 function Drinks() {
-  const { dataApi, cardsRecipes } = useContext(RecipeContext);
-  const [drinks, setDrinks] = useState([]);
+  const { dataApi, setDataApi,
+    cardsRecipes, setCardsRecipes } = useContext(RecipeContext);
   const [categories, setCategories] = useState([]);
+  const [recipesList, setRecipesList] = useState([]);
   const [selectedCat, setSelectedCat] = useState('');
 
   const findDrinks = async () => {
     const URL = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=';
     const drinkList = await requestApi(URL);
-    const first12Foods = await drinkList.drinks.slice(0, FOOD_LIST_LENGTH);
-    setDrinks(first12Foods);
+    setRecipesList(drinkList);
   };
 
   const drinkCateg = async () => {
     const URL = 'https://www.thecocktaildb.com/api/json/v1/1/list.php?c=list';
     const categList = await requestApi(URL);
-    const firstFive = await categList.drinks.slice(0, DRINK_CATEG_LENGTH);
-    setCategories(firstFive);
+    setCategories(categList);
   };
 
   const onCategoryClick = async ({ target: { name } }) => {
     if (selectedCat !== name) {
       const URL = `https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=${name}`;
       const categDrinks = await requestApi(URL);
-      const first12CategDrinks = await categDrinks.drinks.slice(0, FOOD_LIST_LENGTH);
       setSelectedCat(name);
-      setDrinks(first12CategDrinks);
+      setDataApi(categDrinks);
+      setCardsRecipes(false);
     } else {
       setSelectedCat('All');
+      setCardsRecipes(false);
       findDrinks();
     }
   };
@@ -53,6 +53,14 @@ function Drinks() {
     drinkCateg();
   }, []);
 
+  useEffect(() => {
+    setRecipesList(dataApi);
+  }, [dataApi]);
+
+  useEffect(() => {
+    if (cardsRecipes) setSelectedCat('None');
+  }, [cardsRecipes]);
+
   return (
     <div>
       <Header pageName="Drinks" />
@@ -65,11 +73,11 @@ function Drinks() {
           All
         </button>
         {
-          categories.map(({ strCategory }) => (
+          categories.slice(0, DRINK_CATEG_LENGTH).map(({ strCategory }, id) => (
             <button
               type="button"
               name={ strCategory }
-              key={ strCategory }
+              key={ id }
               onClick={ onCategoryClick }
               data-testid={ `${strCategory}-category-filter` }
             >
@@ -80,26 +88,14 @@ function Drinks() {
       </div>
       <section>
         {
-          dataApi.length === 0 && drinks.map((recipes, index) => (
-            <CardsRecipe
-              key={ index }
-              recipes={ recipes }
-              index={ index }
-              type="drinks"
-            />
-          ))
-        }
-        {
-          cardsRecipes && dataApi.drinks.map((recipes, index) => {
-            if (index >= FOOD_LIST_LENGTH) return null;
-            return (
+          recipesList
+            .slice(0, DRINK_LIST_LENGTH).map((recipes, index) => (
               <CardsRecipe
                 key={ index }
                 recipes={ recipes }
                 index={ index }
                 type="drinks"
-              />);
-          })
+              />))
         }
       </section>
       <Footer />
