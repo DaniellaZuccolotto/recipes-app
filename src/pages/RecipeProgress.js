@@ -13,10 +13,7 @@ function RecipeProgress() {
   const [recipeDetails, setRecipeDetails] = useState({});
   const [ingredientsDetails, setIngredientsDetails] = useState({});
   const [ingredientsCheckedList, setIngredientsCheckedList] = useState([]);
-  // const [saveIgredients, setSaveIgredients] = useState({
-  //   cocktails: {},
-  //   meals: {},
-  // });
+  const [copied, setCopied] = useState(false);
 
   const getIngredient = () => {
     const MAX_LENGTH = 50;
@@ -33,6 +30,23 @@ function RecipeProgress() {
     if (ingredients.length === NUMBER_CINQUENTA) return null;
     return ingredients;
   };
+
+  useEffect(() => {
+    const checkHeart = () => {
+      const getLocal = JSON.parse(localStorage.getItem('favoriteRecipes'));
+      if (getLocal) {
+        getLocal.some((favorite) => {
+          if (favorite.id === idPath) {
+            setHeart(blackHeartIcon);
+            return true;
+          }
+          setHeart(whiteHeartIcon);
+          return false;
+        });
+      }
+    };
+    checkHeart();
+  }, [idPath]);
 
   useEffect(() => {
     const getRecipeInAPI = async () => {
@@ -142,6 +156,11 @@ function RecipeProgress() {
     return setHeart(whiteHeartIcon);
   };
 
+  const shareRecipe = () => {
+    navigator.clipboard.writeText(`http://localhost:3000${path}`);
+    setCopied(true);
+  };
+
   const riscar = (name) => ingredientsCheckedList
     .some((ingredient) => ingredient === name);
 
@@ -162,11 +181,17 @@ function RecipeProgress() {
               src={ shareIcon }
               alt="Botão de compartilhamento"
               data-testid="share-btn"
+              onClick={ shareRecipe }
             />
+            {
+              copied && (
+                <p>Link copied!</p>
+              )
+            }
             <input
               src={ heart }
               type="image"
-              alt="Botão de compartilhamento"
+              alt="Botão de favorito"
               onClick={ onClickFavorite }
               data-testid="favorite-btn"
             />
