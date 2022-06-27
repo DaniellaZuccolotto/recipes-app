@@ -7,6 +7,8 @@ import requestApi from '../helpers/requestApi';
 import RecomendedCard from '../components/RecomendedCard';
 import RecipeContext from '../provider/RecipesContext';
 
+const RECIPE_LIST_LENGTH = 6;
+
 function RecipesDetails() {
   const { inProgress, recipeInProgress } = useContext(RecipeContext);
   const [heart, setHeart] = useState(whiteHeartIcon);
@@ -44,9 +46,10 @@ function RecipesDetails() {
   useEffect(() => {
     const WhitchRecipe = () => {
       if (path.includes('foods')) {
-        return setRecipe('foods');
+        setRecipe('food');
+      } else {
+        setRecipe('drink');
       }
-      return setRecipe('drinks');
     };
 
     const recipeDone = () => {
@@ -56,24 +59,53 @@ function RecipesDetails() {
         setIsDone(verifica);
       }
     };
+
+    const recipeFavorite = () => {
+      const favoriteRecipes = JSON.parse(localStorage.getItem('favoriteRecipes'));
+      if (favoriteRecipes) {
+        const verifica = favoriteRecipes.some((rec) => rec.id === id);
+        setHeart(verifica ? blackHeartIcon : whiteHeartIcon);
+      }
+    };
+
     WhitchRecipe();
     recipeDone();
+    recipeFavorite();
     recipeInProgress(id);
   }, [id, path, recipeInProgress]);
 
-  const onClickFavorite = () => {
+  const onClickFavorite = ({ target: { value } }) => {
+    const parseValue = JSON.parse(value);
+    const favoriteRecipes = JSON.parse(localStorage.getItem('favoriteRecipes'));
     if (heart === whiteHeartIcon) {
-      return setHeart(blackHeartIcon);
+      const newFav = {
+        id: parseValue.idMeal || parseValue.idDrink,
+        type: recipe,
+        nationality: parseValue.strArea || '',
+        category: parseValue.strCategory || '',
+        alcoholicOrNot: parseValue.strAlcoholic || '',
+        name: parseValue.strMeal || parseValue.strDrink,
+        image: parseValue.strMealThumb || parseValue.strDrinkThumb,
+      };
+
+      const newFavList = favoriteRecipes ? [...favoriteRecipes, newFav] : [newFav];
+      localStorage.setItem('favoriteRecipes', JSON.stringify(newFavList));
+      setHeart(blackHeartIcon);
+    } else {
+      const newReduceFavorites = favoriteRecipes
+        .filter(({ id: foodId }) => foodId !== id);
+
+      localStorage.setItem('favoriteRecipes', JSON.stringify(newReduceFavorites));
+      setHeart(whiteHeartIcon);
     }
-    return setHeart(whiteHeartIcon);
   };
 
   useEffect(() => {
     const getRecipeInAPI = async () => {
-      if (recipe === 'foods') {
+      if (path.includes('foods')) {
         const URL = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`;
         const food = await requestApi(URL);
-        const actualFood = food.meals[0];
+        const actualFood = food[0];
         const foodDetail = {
           name: actualFood.strMeal,
           category: actualFood.strCategory,
@@ -84,10 +116,10 @@ function RecipesDetails() {
         setApiReturn(actualFood);
         return setDetails(foodDetail);
       }
-      if (recipe === 'drinks') {
+      if (path.includes('drinks')) {
         const URL = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${id}`;
         const drink = await requestApi(URL);
-        const actualDrink = drink.drinks[0];
+        const actualDrink = drink[0];
         const drinkDetail = {
           name: actualDrink.strDrink,
           category: actualDrink.strAlcoholic,
@@ -101,29 +133,26 @@ function RecipesDetails() {
     };
 
     getRecipeInAPI();
-  }, [recipe, id]);
+  }, [recipe, id, path]);
 
   useEffect(() => {
     const FindRecipes = async () => {
-      const RECIPE_LIST_LENGTH = 6;
       if (path.includes('drinks')) {
         const URL = 'https://www.themealdb.com/api/json/v1/1/search.php?s=';
         const foodList = await requestApi(URL);
-        const first6Foods = await foodList.meals.slice(0, RECIPE_LIST_LENGTH);
-        setRecomendRecipes(first6Foods);
+        setRecomendRecipes(foodList);
       }
       if (path.includes('foods')) {
         const URL = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=';
         const drinkList = await requestApi(URL);
-        const first6Drink = await drinkList.drinks.slice(0, RECIPE_LIST_LENGTH);
-        setRecomendRecipes(first6Drink);
+        setRecomendRecipes(drinkList);
       }
     };
     FindRecipes();
   }, [path]);
 
   const onClickStart = () => {
-    history.push(`/${recipe}/${id}/in-progress`);
+    history.push(`/${recipe}s/${id}/in-progress`);
   };
 
   const shareRecipe = () => {
@@ -151,8 +180,9 @@ function RecipesDetails() {
       <input
         src={ heart }
         type="image"
-        alt="Botão de compartilhamento"
+        alt="Botão de favorito"
         onClick={ onClickFavorite }
+        value={ JSON.stringify(apiReturn) }
         data-testid="favorite-btn"
       />
       {
@@ -174,7 +204,7 @@ function RecipesDetails() {
       <iframe data-testid="video" src={ details.video } title={ details.name } />
       <h2>Recommended</h2>
       <section className="recommended">
-        { recomendRecipes.map((recipes, index) => (
+        { recomendRecipes.slice(0, RECIPE_LIST_LENGTH).map((recipes, index) => (
           <div
             key={ index }
             data-testid={ `${index}-recomendation-card` }
@@ -182,7 +212,7 @@ function RecipesDetails() {
             <RecomendedCard
               recipes={ recipes }
               index={ index }
-              type={ recipe === 'foods' ? 'drinks' : 'foods' }
+              type={ recipe === 'food' ? 'drink' : 'food' }
             />
           </div>
         )) }

@@ -9,34 +9,34 @@ const FOOD_LIST_LENGTH = 12;
 const FOOD_CATEG_LENGTH = 5;
 
 function Foods() {
-  const { dataApi, cardsRecipes } = useContext(RecipeContext);
-  const [foods, setFoods] = useState([]);
+  const { dataApi, setDataApi,
+    cardsRecipes, setCardsRecipes } = useContext(RecipeContext);
   const [categories, setCategories] = useState([]);
+  const [recipesList, setRecipesList] = useState([]);
   const [selectedCat, setSelectedCat] = useState('');
 
   const findFoods = async () => {
     const URL = 'https://www.themealdb.com/api/json/v1/1/search.php?s=';
     const foodList = await requestApi(URL);
-    const first12Foods = await foodList.meals.slice(0, FOOD_LIST_LENGTH);
-    setFoods(first12Foods);
+    setRecipesList(foodList);
   };
 
   const foodCateg = async () => {
     const URL = 'https://www.themealdb.com/api/json/v1/1/list.php?c=list';
     const categList = await requestApi(URL);
-    const firstFive = await categList.meals.slice(0, FOOD_CATEG_LENGTH);
-    setCategories(firstFive);
+    setCategories(categList);
   };
 
   const onCategoryClick = async ({ target: { name } }) => {
     if (selectedCat !== name) {
       const URL = `https://www.themealdb.com/api/json/v1/1/filter.php?c=${name}`;
       const categFoods = await requestApi(URL);
-      const first12CategFoods = await categFoods.meals.slice(0, FOOD_LIST_LENGTH);
       setSelectedCat(name);
-      setFoods(first12CategFoods);
+      setDataApi(categFoods);
+      setCardsRecipes(false);
     } else {
       setSelectedCat('All');
+      setCardsRecipes(false);
       findFoods();
     }
   };
@@ -44,6 +44,7 @@ function Foods() {
   const onAllClick = async () => {
     if (selectedCat !== 'All') {
       setSelectedCat('All');
+      setCardsRecipes(false);
       findFoods();
     }
   };
@@ -52,6 +53,14 @@ function Foods() {
     findFoods();
     foodCateg();
   }, []);
+
+  useEffect(() => {
+    setRecipesList(dataApi);
+  }, [dataApi]);
+
+  useEffect(() => {
+    if (cardsRecipes) setSelectedCat('None');
+  }, [cardsRecipes]);
 
   return (
     <main>
@@ -65,11 +74,11 @@ function Foods() {
           All
         </button>
         {
-          categories.map(({ strCategory }) => (
+          categories.slice(0, FOOD_CATEG_LENGTH).map(({ strCategory }, id) => (
             <button
               type="button"
               name={ strCategory }
-              key={ strCategory }
+              key={ id }
               onClick={ onCategoryClick }
               data-testid={ `${strCategory}-category-filter` }
             >
@@ -80,27 +89,15 @@ function Foods() {
       </div>
       <section>
         {
-          dataApi.length === 0 && foods.map((recipes, index) => (
-            <CardsRecipe
-              key={ index }
-              recipes={ recipes }
-              index={ index }
-              type="foods"
-            />
-          ))
-        }
-        {
-          cardsRecipes && dataApi.meals.map((recipes, index) => {
-            const NUMBER_TWELVE = 12;
-            if (index >= NUMBER_TWELVE) return null;
-            return (
-              <CardsRecipe
-                key={ index }
-                recipes={ recipes }
-                index={ index }
-                type="foods"
-              />);
-          })
+          recipesList
+            .slice(0, FOOD_LIST_LENGTH).map((recipes, index) => (
+              <div key={ index }>
+                <CardsRecipe
+                  recipes={ recipes }
+                  index={ index }
+                  type="foods"
+                />
+              </div>))
         }
       </section>
       <Footer />

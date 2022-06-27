@@ -6,10 +6,10 @@ import blackHeartIcon from '../images/blackHeartIcon.svg';
 import requestApi from '../helpers/requestApi';
 
 function RecipeProgress() {
-  const [riscar, setRiscar] = useState(false);
   const [heart, setHeart] = useState(whiteHeartIcon);
   const [recipeDetails, setRecipeDetails] = useState({});
   const [ingredientsDetails, setIngredientsDetails] = useState({});
+  const [ingredientsCheckedList, setIngredientsCheckedList] = useState([]);
   const history = useHistory();
   const path = history.location.pathname;
   const idPath = path.replace(/[^0-9]/g, '');
@@ -35,7 +35,7 @@ function RecipeProgress() {
       if (path.includes('foods')) {
         const URL = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${idPath}`;
         const food = await requestApi(URL);
-        const actualFood = await food.meals[0];
+        const actualFood = await food[0];
         const foodDetail = {
           name: actualFood.strMeal,
           category: actualFood.strCategory,
@@ -49,7 +49,7 @@ function RecipeProgress() {
       if (path.includes('drinks')) {
         const URL = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${idPath}`;
         const drink = await requestApi(URL);
-        const actualDrink = await drink.drinks[0];
+        const actualDrink = await drink[0];
         const drinkDetail = {
           name: actualDrink.strDrink,
           category: actualDrink.strAlcoholic,
@@ -66,9 +66,12 @@ function RecipeProgress() {
 
   const onclickChecked = ({ target }) => {
     if (target.checked) {
-      if (target.value === target.name) { setRiscar(true); }
+      setIngredientsCheckedList((prevState) => [...prevState, target.value]);
     } else {
-      setRiscar(false);
+      const removeChecked = ingredientsCheckedList.filter(
+        (item) => item !== target.value,
+      );
+      setIngredientsCheckedList(removeChecked);
     }
   };
 
@@ -78,6 +81,9 @@ function RecipeProgress() {
     }
     return setHeart(whiteHeartIcon);
   };
+
+  const riscar = (name) => ingredientsCheckedList
+    .some((ingredient) => ingredient === name);
 
   return (
     <div>
@@ -110,7 +116,7 @@ function RecipeProgress() {
                 data-testid={ `${i}-ingredient-step` }
                 htmlFor={ `ingredient-${i}` }
                 key={ i }
-                style={ riscar ? { textDecoration: 'line-through' } : null }
+                style={ riscar(ingredients) ? { textDecoration: 'line-through' } : null }
               >
                 { ingredients }
                 <input

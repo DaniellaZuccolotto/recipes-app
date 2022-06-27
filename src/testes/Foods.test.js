@@ -52,22 +52,61 @@ describe('Testa a página Foods', () => {
 
   test('Verifica a funcionalidade dos filtros', async () => {
     const { history } = renderWithRouter(<App />);
-    jest.spyOn(global, 'fetch');
     history.push('/foods');
+    const fetch = jest.spyOn(global, 'fetch');
+
     const beefButton = await screen.findByRole('button', {
       name: /beef/i,
     });
 
-    userEvent.click(beefButton);
-    expect(global.fetch).toHaveBeenCalledWith('https://www.themealdb.com/api/json/v1/1/filter.php?c=Beef');
+    const EXPECT_URL = 'https://www.themealdb.com/api/json/v1/1/filter.php?c=Beef';
+    const URL = 'https://www.themealdb.com/api/json/v1/1/search.php?s=';
 
     userEvent.click(beefButton);
-    expect(global.fetch).toHaveBeenCalledWith('https://www.themealdb.com/api/json/v1/1/search.php?s=');
+    expect(fetch).toHaveBeenCalledWith(EXPECT_URL);
+
+    userEvent.click(beefButton);
+    expect(fetch).toHaveBeenCalledWith(URL);
 
     const allBtn = await screen.findByRole('button', {
       name: /all/i,
     });
     userEvent.click(allBtn);
-    expect(global.fetch).toHaveBeenCalledWith('https://www.themealdb.com/api/json/v1/1/search.php?s=');
+    expect(fetch).toHaveBeenCalledWith(URL);
+
+    fetch.mockRestore();
   });
+
+  test('Caso não encontre nenhuma receita, exibe a mensagem apropriada em Foods',
+    () => {
+      const { history } = renderWithRouter(<App />);
+      history.push('/foods');
+
+      const fetch = jest.spyOn(global, 'fetch');
+
+      const alert = jest.spyOn(global, 'alert');
+      const alertMsg = 'Sorry, we haven\'t found any recipes for these filters.';
+
+      const searchIcon = screen.getByRole('button', {
+        name: /open-search/i,
+      });
+      userEvent.click(searchIcon);
+
+      const nameFilter = screen.getByRole('radio', { name: /name/i });
+      const searchText = screen.getByRole('textbox');
+      const searchBtn = screen.getByRole('button', { name: 'Search' });
+
+      fetch.mockResolvedValue({
+        json: jest.fn().mockResolvedValue(null),
+      });
+
+      userEvent.type(searchText, 'lalala');
+      userEvent.click(nameFilter);
+      userEvent.click(searchBtn);
+
+      const WAIT_SEC = 500;
+      setTimeout(() => {
+        expect(alert).toHaveBeenCalledWith(alertMsg);
+      }, WAIT_SEC);
+    });
 });
