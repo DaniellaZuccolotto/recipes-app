@@ -7,8 +7,8 @@ function RecomendedCard({ recipes, index, type }) {
     <div>
       {
         type === 'drink' ? (
-          <main data-testid={ `${index}-recipe-card` }>
-            <Link to={ `/drinks/${recipes.idDrink}` }>
+          <Link to={ `/drinks/${recipes.idDrink}` }>
+            <main data-testid={ `${index}-recipe-card` }>
               <h3 data-testid={ `${index}-recomendation-title` }>{ recipes.strDrink }</h3>
               <img
                 src={ recipes.strDrinkThumb }
@@ -16,11 +16,11 @@ function RecomendedCard({ recipes, index, type }) {
                 style={ { width: 150 } }
                 data-testid={ `${index}-card-img` }
               />
-            </Link>
-          </main>
+            </main>
+          </Link>
         ) : (
-          <main data-testid={ `${index}-recipe-card` }>
-            <Link to={ `/foods/${recipes.idMeal}` }>
+          <Link to={ `/foods/${recipes.idMeal}` }>
+            <main data-testid={ `${index}-recipe-card` }>
               <h3 data-testid={ `${index}-recomendation-title` }>{ recipes.strMeal }</h3>
               <img
                 src={ recipes.strMealThumb }
@@ -28,8 +28,8 @@ function RecomendedCard({ recipes, index, type }) {
                 style={ { width: 150 } }
                 data-testid={ `${index}-card-img` }
               />
-            </Link>
-          </main>
+            </main>
+          </Link>
         )
       }
     </div>

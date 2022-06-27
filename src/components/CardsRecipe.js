@@ -10,16 +10,17 @@ function CardsRecipe({ recipes, index, type }) {
   };
 
   return (
-    <main data-testid={ `${index}-recipe-card` }>
-      <Link to={ `/${type}/${recipe.id}` }>
+    <Link to={ `/${type}/${recipe.id}` }>
+      <main data-testid={ `${index}-recipe-card` }>
         <h3 data-testid={ `${index}-card-name` }>{ recipe.name }</h3>
         <img
           src={ recipe.img }
           alt={ recipe.name }
           data-testid={ `${index}-card-img` }
+          style={ { width: 150 } }
         />
-      </Link>
-    </main>
+      </main>
+    </Link>
   );
 }
 

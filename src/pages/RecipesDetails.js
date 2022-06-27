@@ -1,20 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import shareIcon from '../images/shareIcon.svg';
 import whiteHeartIcon from '../images/whiteHeartIcon.svg';
 import blackHeartIcon from '../images/blackHeartIcon.svg';
 import requestApi from '../helpers/requestApi';
 import RecomendedCard from '../components/RecomendedCard';
+import RecipeContext from '../provider/RecipesContext';
 
 const RECIPE_LIST_LENGTH = 6;
 
 function RecipesDetails() {
+  const { inProgress, recipeInProgress } = useContext(RecipeContext);
   const [heart, setHeart] = useState(whiteHeartIcon);
   const [recipe, setRecipe] = useState('');
   const [details, setDetails] = useState('');
   const [apiReturn, setApiReturn] = useState('');
   const [recomendRecipes, setRecomendRecipes] = useState([]);
   const [isDone, setIsDone] = useState(false);
+  const [copied, setCopied] = useState(false);
   const history = useHistory();
   const path = history.location.pathname;
   const id = path.replace(/[^0-9]/g, '');
@@ -68,7 +71,8 @@ function RecipesDetails() {
     WhitchRecipe();
     recipeDone();
     recipeFavorite();
-  }, [id, path]);
+    recipeInProgress(id);
+  }, [id, path, recipeInProgress]);
 
   const onClickFavorite = ({ target: { value } }) => {
     const parseValue = JSON.parse(value);
@@ -147,6 +151,15 @@ function RecipesDetails() {
     FindRecipes();
   }, [path]);
 
+  const onClickStart = () => {
+    history.push(`/${recipe}s/${id}/in-progress`);
+  };
+
+  const shareRecipe = () => {
+    navigator.clipboard.writeText(`http://localhost:3000${path}`);
+    setCopied(true);
+  };
+
   return (
     <main>
       <img
@@ -162,6 +175,7 @@ function RecipesDetails() {
         src={ shareIcon }
         alt="Botão de compartilhamento"
         data-testid="share-btn"
+        onClick={ shareRecipe }
       />
       <input
         src={ heart }
@@ -171,6 +185,11 @@ function RecipesDetails() {
         value={ JSON.stringify(apiReturn) }
         data-testid="favorite-btn"
       />
+      {
+        copied && (
+          <p>Link copied!</p>
+        )
+      }
       <h2>Ingredients</h2>
       <section className="ingredients">
         <ul>
@@ -204,8 +223,9 @@ function RecipesDetails() {
             type="button"
             className="start-btn"
             data-testid="start-recipe-btn"
+            onClick={ onClickStart }
           >
-            Start Recipe
+            { inProgress }
           </button>
         )
       }

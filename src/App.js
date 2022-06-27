@@ -17,6 +17,7 @@ import Profile from './pages/Profile';
 import DoneRecipes from './pages/DoneRecipes';
 import FavoriteRecipes from './pages/FavoriteRecipes';
 import RecipesDetails from './pages/RecipesDetails';
+import RecipeProgress from './pages/RecipeProgress';
 
 function App() {
   return (
@@ -47,6 +48,11 @@ function App() {
           exact
           path="/explore/foods/nationalities"
           component={ ExploreFoodsNationalities }
+        />
+        <Route
+          exact
+          path="/:foods/:id/in-progress"
+          component={ RecipeProgress }
         />
         <Route><h1>Pagina não encontrada</h1></Route>
       </Switch>
