@@ -1,13 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import shareIcon from '../images/shareIcon.svg';
 
 function DoneRecipes() {
   const [copied, setCopied] = useState(false);
+  const [recipes, setRecipes] = useState([]);
+  const [filtredRecipes, setFiltredRecipes] = useState([]);
 
   const doneRecipes = () => {
     const done = JSON.parse(localStorage.getItem('doneRecipes'));
     return done || [];
+  };
+
+  useEffect(() => {
+    setRecipes(doneRecipes());
+    setFiltredRecipes(doneRecipes());
+  }, []);
+
+  useEffect(() => {}, [filtredRecipes]);
+
+  const onClick = ({ target }) => {
+    switch (target.value) {
+    case 'Food':
+      return setFiltredRecipes(recipes
+        .filter((recipe) => recipe.type === 'food'));
+    case 'Drink':
+      return setFiltredRecipes(recipes
+        .filter((recipe) => recipe.type === 'drink'));
+    default:
+      return setFiltredRecipes(doneRecipes());
+    }
   };
 
   // const doneRecipes = [{
@@ -30,31 +52,34 @@ function DoneRecipes() {
       <div>
         <button
           type="button"
-          // onClick={ onAllClick }
+          onClick={ onClick }
           data-testid="filter-by-all-btn"
+          value="All"
         >
           All
         </button>
 
         <button
           type="button"
-          // onClick={ onAllClick }
+          onClick={ onClick }
           data-testid="filter-by-food-btn"
+          value="Food"
         >
           Food
         </button>
 
         <button
           type="button"
-          // onClick={ onAllClick }
+          onClick={ onClick }
           data-testid="filter-by-drink-btn"
+          value="Drink"
         >
           Drink
         </button>
       </div>
       <div>
         {
-          doneRecipes().map((recipe, index) => (
+          filtredRecipes.map((recipe, index) => (
             <div key={ index }>
               <img
                 src={ recipe.image }
