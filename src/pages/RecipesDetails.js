@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import shareIcon from '../images/shareIcon.svg';
 import whiteHeartIcon from '../images/whiteHeartIcon.svg';
 import blackHeartIcon from '../images/blackHeartIcon.svg';
 import requestApi from '../helpers/requestApi';
 import RecomendedCard from '../components/RecomendedCard';
+import RecipeContext from '../provider/RecipesContext';
 
 function RecipesDetails() {
+  const { inProgress, recipeInProgress } = useContext(RecipeContext);
   const [heart, setHeart] = useState(whiteHeartIcon);
   const [recipe, setRecipe] = useState('');
   const [details, setDetails] = useState('');
@@ -17,6 +19,7 @@ function RecipesDetails() {
   const history = useHistory();
   const path = history.location.pathname;
   const id = path.replace(/[^0-9]/g, '');
+  console.log(id);
 
   const GetIngredient = () => {
     if (apiReturn !== '') {
@@ -42,7 +45,7 @@ function RecipesDetails() {
   useEffect(() => {
     const WhitchRecipe = () => {
       if (path.includes('foods')) {
-        return setRecipe('food');
+        return setRecipe('foods');
       }
       return setRecipe('drinks');
     };
@@ -54,10 +57,10 @@ function RecipesDetails() {
         setIsDone(verifica);
       }
     };
-
     WhitchRecipe();
     recipeDone();
-  }, [id, path]);
+    recipeInProgress(id);
+  }, [id, path, recipeInProgress]);
 
   const onClickFavorite = () => {
     if (heart === whiteHeartIcon) {
@@ -68,7 +71,7 @@ function RecipesDetails() {
 
   useEffect(() => {
     const getRecipeInAPI = async () => {
-      if (recipe === 'food') {
+      if (recipe === 'foods') {
         const URL = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`;
         const food = await requestApi(URL);
         const actualFood = food.meals[0];
@@ -119,6 +122,10 @@ function RecipesDetails() {
     };
     FindRecipes();
   }, [path]);
+
+  const onClickStart = () => {
+    history.push(`/${recipe}/${id}/in-progress`);
+  };
 
   const shareRecipe = () => {
     navigator.clipboard.writeText(`http://localhost:3000${path}`);
@@ -176,7 +183,7 @@ function RecipesDetails() {
             <RecomendedCard
               recipes={ recipes }
               index={ index }
-              type={ recipe === 'food' ? 'drinks' : 'food' }
+              type={ recipe === 'foods' ? 'drinks' : 'foods' }
             />
           </div>
         )) }
@@ -187,8 +194,9 @@ function RecipesDetails() {
             type="button"
             className="start-btn"
             data-testid="start-recipe-btn"
+            onClick={ onClickStart }
           >
-            Start Recipe
+            { inProgress }
           </button>
         )
       }

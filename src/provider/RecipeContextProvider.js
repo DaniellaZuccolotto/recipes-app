@@ -5,6 +5,8 @@ import RecipeContext from './RecipesContext';
 
 function RecipeContextProvider({ children }) {
   const history = useHistory();
+  const path = history.location.pathname;
+
   const [loginData, setLoginData] = useState({
     email: '',
     password: '',
@@ -16,7 +18,7 @@ function RecipeContextProvider({ children }) {
   });
 
   const [dataApi, setDataApi] = useState([]);
-
+  const [inProgress, setInProgress] = useState('Start Recipe');
   const [cardsRecipes, setCardsRecipes] = useState(false);
 
   const verifyQuantidade = (tamanho, id, type) => {
@@ -24,6 +26,24 @@ function RecipeContextProvider({ children }) {
       history.push(`/${type}/${id}`);
     } else {
       setCardsRecipes(true);
+    }
+  };
+
+  const recipeInProgress = (idPath) => {
+    const inProgressRecipes = JSON.parse(localStorage.getItem('inProgressRecipes'));
+    if (inProgressRecipes) {
+      if (path.includes('foods')) {
+        const verificaFoods = Object.keys(inProgressRecipes.meals);
+        if (verificaFoods.some((idMeal) => idMeal === idPath)) {
+          setInProgress('Continue Recipe');
+        }
+      }
+      if (path.includes('drinks')) {
+        const verificaDrinks = Object.keys(inProgressRecipes.cocktails);
+        if (verificaDrinks.some((idDrink) => idDrink === idPath)) {
+          setInProgress('Continue Recipe');
+        }
+      }
     }
   };
 
@@ -36,6 +56,9 @@ function RecipeContextProvider({ children }) {
     setDataApi,
     verifyQuantidade,
     cardsRecipes,
+    recipeInProgress,
+    inProgress,
+    setInProgress,
   };
 
   return (
