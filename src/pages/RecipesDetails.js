@@ -19,7 +19,6 @@ function RecipesDetails() {
   const history = useHistory();
   const path = history.location.pathname;
   const id = path.replace(/[^0-9]/g, '');
-  console.log(id);
 
   const GetIngredient = () => {
     if (apiReturn !== '') {

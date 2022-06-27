@@ -61,7 +61,6 @@ function RecipeProgress() {
         setIngredientsDetails(actualDrink);
       }
     };
-    console.log(idPath);
     getRecipeInAPI();
   }, [path, idPath]);
 
