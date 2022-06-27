@@ -34,7 +34,6 @@ describe('Testa a página de Login', () => {
     history.push('/profile');
     const userEmail = JSON.parse(localStorage.getItem('user'));
     const emailEl = screen.getByRole('paragraph', { name: userEmail.email });
-    console.log(userEmail);
     expect(emailEl).toBeInTheDocument();
   });
 

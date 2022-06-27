@@ -7,7 +7,6 @@ function Profile() {
   const history = useHistory();
 
   const email = JSON.parse(localStorage.getItem('user'));
-  console.log(email.email);
   const handleDoneRecipesClick = () => {
     history.push('/done-recipes');
   };
