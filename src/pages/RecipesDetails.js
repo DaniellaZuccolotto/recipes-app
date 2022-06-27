@@ -15,7 +15,7 @@ function RecipesDetails() {
   const [apiReturn, setApiReturn] = useState('');
   const [recomendRecipes, setRecomendRecipes] = useState([]);
   const [isDone, setIsDone] = useState(false);
-
+  const [copied, setCopied] = useState(false);
   const history = useHistory();
   const path = history.location.pathname;
   const id = path.replace(/[^0-9]/g, '');
@@ -127,6 +127,11 @@ function RecipesDetails() {
     history.push(`/${recipe}/${id}/in-progress`);
   };
 
+  const shareRecipe = () => {
+    navigator.clipboard.writeText(`http://localhost:3000${path}`);
+    setCopied(true);
+  };
+
   return (
     <main>
       <img
@@ -142,6 +147,7 @@ function RecipesDetails() {
         src={ shareIcon }
         alt="Botão de compartilhamento"
         data-testid="share-btn"
+        onClick={ shareRecipe }
       />
       <input
         src={ heart }
@@ -150,6 +156,11 @@ function RecipesDetails() {
         onClick={ onClickFavorite }
         data-testid="favorite-btn"
       />
+      {
+        copied && (
+          <p>Link copied!</p>
+        )
+      }
       <h2>Ingredients</h2>
       <section className="ingredients">
         <ul>
