@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '../components/Header';
 import shareIcon from '../images/shareIcon.svg';
 
 function DoneRecipes() {
+  const [copied, setCopied] = useState(false);
+
   const doneRecipes = () => {
     const done = JSON.parse(localStorage.getItem('doneRecipes'));
     return done || [];
@@ -81,7 +83,10 @@ function DoneRecipes() {
                 src={ shareIcon }
                 alt="Botão de compartilhamento"
                 data-testid={ `${index}-horizontal-share-btn` }
-                // onClick={ shareRecipe }
+                onClick={ () => {
+                  navigator.clipboard.writeText(`http://localhost:3000/${recipe.type}s/${recipe.id}`);
+                  setCopied(true);
+                } }
               />
               <div>
                 {
@@ -95,6 +100,13 @@ function DoneRecipes() {
                   ))
                 }
               </div>
+              {
+                copied ? (
+                  <p>Link copied!</p>
+                ) : (
+                  null
+                )
+              }
             </div>
           ))
         }
