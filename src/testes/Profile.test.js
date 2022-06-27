@@ -6,7 +6,7 @@ import renderWithRouter from './helpers/renderWithRouter';
 
 const EMAIL = 'teste@test.com';
 
-describe('Testa a página de Login', () => {
+describe('Testa a página Profile', () => {
   test('Verifica se existem os botões Done Recipes, Favorite Recipes, Logout', () => {
     const { history } = renderWithRouter(<App />);
     localStorage.setItem('user', JSON.stringify(EMAIL));
