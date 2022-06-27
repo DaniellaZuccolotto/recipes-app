@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import whiteHeartIcon from '../images/whiteHeartIcon.svg';
 import blackHeartIcon from '../images/blackHeartIcon.svg';
 
-function FavoriteButton({ btnValue, recipeID, recipeType, remover }) {
+function FavoriteButton({ btnValue, recipeID, recipeType, data, remover }) {
   const [heart, setHeart] = useState(whiteHeartIcon);
 
   const onClickFavorite = ({ target: { value } }) => {
@@ -52,7 +52,7 @@ function FavoriteButton({ btnValue, recipeID, recipeType, remover }) {
       alt="Botão de favorito"
       onClick={ onClickFavorite }
       value={ btnValue }
-      data-testid="favorite-btn"
+      data-testid={ data }
     />
   );
 }
@@ -61,6 +61,7 @@ FavoriteButton.propTypes = {
   btnValue: PropTypes.string.isRequired,
   recipeID: PropTypes.string.isRequired,
   recipeType: PropTypes.string.isRequired,
+  data: PropTypes.string.isRequired,
   remover: PropTypes.func,
 };
 

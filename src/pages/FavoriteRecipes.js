@@ -22,7 +22,6 @@ function FavoriteRecipes() {
     getFavorites();
   }, [remover]);
 
-  console.log(favorites);
   return (
     <div>
       <Header pageName="Favorite Recipes" searchEnabled={ false } />
@@ -36,6 +35,24 @@ function FavoriteRecipes() {
             onClick={ onFilterClick }
           >
             All
+          </button>
+          <button
+            type="button"
+            name="food-button"
+            value="food"
+            data-testid="filter-by-food-btn"
+            onClick={ onFilterClick }
+          >
+            Food
+          </button>
+          <button
+            type="button"
+            name="drink-button"
+            value="drink"
+            data-testid="filter-by-drink-btn"
+            onClick={ onFilterClick }
+          >
+            Drinks
           </button>
         </div>
         {
@@ -61,14 +78,15 @@ function FavoriteRecipes() {
                     </h3>
                   </Link>
                   { recipe.type === 'drink' && (
-                    <p>{ recipe.alcoholicOrNot }</p>
+                    <p data-testid={ `${index}-horizontal-top-text` }>
+                      { recipe.alcoholicOrNot }
+                    </p>
                   )}
                   { recipe.type === 'food' && (
                     <div>
                       <p data-testid={ `${index}-horizontal-top-text` }>
-                        { recipe.category }
+                        {`${recipe.nationality} - ${recipe.category}`}
                       </p>
-                      <p>{ recipe.nationality }</p>
                     </div>
                   )}
                   <div>
@@ -77,10 +95,11 @@ function FavoriteRecipes() {
                       recipeID={ recipe.id }
                       recipeType={ recipe.type }
                       remover={ setRemover }
+                      data={ `${index}-horizontal-favorite-btn` }
                     />
                     <ShareButton
                       path={ `/${recipe.type}s/${recipe.id}` }
-                      id={ index }
+                      data={ `${index}-horizontal-share-btn` }
                     />
                   </div>
                 </section>

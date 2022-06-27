@@ -131,10 +131,11 @@ function RecipesDetails() {
         btnValue={ JSON.stringify(apiReturn) }
         recipeID={ id }
         recipeType={ recipe }
+        data="favorite-btn"
       />
       <ShareButton
         path={ path }
-        id={ null }
+        data="share-btn"
       />
       <h2>Ingredients</h2>
       <section className="ingredients">
