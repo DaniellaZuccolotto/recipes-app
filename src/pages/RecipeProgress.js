@@ -6,13 +6,17 @@ import blackHeartIcon from '../images/blackHeartIcon.svg';
 import requestApi from '../helpers/requestApi';
 
 function RecipeProgress() {
+  const history = useHistory();
+  const path = history.location.pathname;
+  const idPath = path.replace(/[^0-9]/g, '');
   const [heart, setHeart] = useState(whiteHeartIcon);
   const [recipeDetails, setRecipeDetails] = useState({});
   const [ingredientsDetails, setIngredientsDetails] = useState({});
   const [ingredientsCheckedList, setIngredientsCheckedList] = useState([]);
-  const history = useHistory();
-  const path = history.location.pathname;
-  const idPath = path.replace(/[^0-9]/g, '');
+  // const [saveIgredients, setSaveIgredients] = useState({
+  //   cocktails: {},
+  //   meals: {},
+  // });
 
   const getIngredient = () => {
     const MAX_LENGTH = 50;
@@ -64,14 +68,70 @@ function RecipeProgress() {
     getRecipeInAPI();
   }, [path, idPath]);
 
+  const verifyKey = (local, type, value) => (local[type][idPath]
+    ? [...local[type][idPath], value] : [value]);
+
   const onclickChecked = ({ target }) => {
     if (target.checked) {
       setIngredientsCheckedList((prevState) => [...prevState, target.value]);
+      const getLocal = JSON.parse(localStorage.getItem('inProgressRecipes'));
+      if (path.includes('foods')) {
+        if (getLocal) {
+          const food = {
+            ...getLocal,
+            meals: {
+              ...getLocal.meals,
+              [idPath]: verifyKey(getLocal, 'meals', target.value),
+            },
+          };
+          localStorage.setItem('inProgressRecipes', JSON.stringify(food));
+        } else {
+          const food = {
+            cocktails: {},
+            meals: {
+              [idPath]: [target.value],
+            },
+          };
+          localStorage.setItem('inProgressRecipes', JSON.stringify(food));
+        }
+      }
+      if (path.includes('drinks')) {
+        if (getLocal) {
+          const drink = {
+            ...getLocal,
+            cocktails: {
+              ...getLocal.cocktails,
+              [idPath]: verifyKey(getLocal, 'cocktails', target.value),
+            },
+          };
+          localStorage.setItem('inProgressRecipes', JSON.stringify(drink));
+        } else {
+          const drink = {
+            meals: {},
+            cocktails: {
+              [idPath]: [target.value],
+            },
+          };
+          localStorage.setItem('inProgressRecipes', JSON.stringify(drink));
+        }
+      }
     } else {
       const removeChecked = ingredientsCheckedList.filter(
         (item) => item !== target.value,
       );
       setIngredientsCheckedList(removeChecked);
+    }
+  };
+
+  const checkedIngredients = (ingredient) => {
+    const getLocal = JSON.parse(localStorage.getItem('inProgressRecipes'));
+    if (getLocal) {
+      if (path.includes('foods') && getLocal.meals[idPath]) {
+        return getLocal.meals[idPath].includes(ingredient);
+      }
+      if (path.includes('drinks') && getLocal.cocktails[idPath]) {
+        return getLocal.cocktails[idPath].includes(ingredient);
+      }
     }
   };
 
@@ -124,6 +184,7 @@ function RecipeProgress() {
                   type="checkbox"
                   name={ ingredients }
                   value={ ingredients }
+                  checked={ checkedIngredients(ingredients) }
                   onClick={ onclickChecked }
                 />
               </label>
