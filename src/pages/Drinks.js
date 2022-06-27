@@ -44,6 +44,7 @@ function Drinks() {
   const onAllClick = async () => {
     if (selectedCat !== 'All') {
       setSelectedCat('All');
+      setCardsRecipes(false);
       findDrinks();
     }
   };

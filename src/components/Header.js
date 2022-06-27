@@ -63,11 +63,11 @@ function Header({ pageName, searchEnabled }) {
     const recive = await requestApi(URL);
 
     if (recive === null || !recive.length) {
-      return global.alert('Sorry, we haven\'t found any recipes for these filters.');
+      global.alert('Sorry, we haven\'t found any recipes for these filters.');
+    } else {
+      setDataApi(recive);
+      verifyQuantidade(recive.length, recive[0], type);
     }
-
-    setDataApi(recive);
-    verifyQuantidade(recive.length, recive[0], type);
   };
 
   return (
