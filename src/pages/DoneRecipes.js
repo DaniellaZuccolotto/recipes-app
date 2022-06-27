@@ -1,8 +1,12 @@
 import React from 'react';
+// import { useHistory } from 'react-router-dom';
 import Header from '../components/Header';
 import shareIcon from '../images/shareIcon.svg';
 
 function DoneRecipes() {
+  // const history = useHistory();
+  // const path = history.location.pathname;
+
   const doneRecipes = () => {
     const done = JSON.parse(localStorage.getItem('doneRecipes'));
     return done || [];
@@ -60,7 +64,7 @@ function DoneRecipes() {
                 data-testid={ `${index}-horizontal-image` }
               />
               <p data-testid={ `${index}-horizontal-top-text` }>
-                {recipe.category}
+                {`${recipe.nationality} - ${recipe.category}`}
               </p>
               <p data-testid={ `${index}-horizontal-name` }>
                 {recipe.name}
@@ -77,7 +81,7 @@ function DoneRecipes() {
               />
               <div>
                 {
-                  recipe.tags.map((tagName) => (
+                  recipe.tags.slice(0, 2).map((tagName) => (
                     <p
                       key={ tagName }
                       data-testid={ `${index}-${tagName}-horizontal-tag` }
