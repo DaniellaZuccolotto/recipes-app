@@ -60,7 +60,7 @@ describe('Testa a página de Login', () => {
     expect(history.location.pathname).toBe('/favorite-recipes');
   });
 
-  test('Verifica se o botão limpa o LocalStorage e redireciona para o Login', () => {
+  test('Verifica se o botão Logout limpa LocalStorage e redireciona para o Login', () => {
     const { history } = renderWithRouter(<App />);
     localStorage.setItem('user', JSON.stringify(EMAIL));
     history.push('/profile');
