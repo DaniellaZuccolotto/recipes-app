@@ -1,23 +1,20 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import shareIcon from '../images/shareIcon.svg';
-import whiteHeartIcon from '../images/whiteHeartIcon.svg';
-import blackHeartIcon from '../images/blackHeartIcon.svg';
 import requestApi from '../helpers/requestApi';
 import RecomendedCard from '../components/RecomendedCard';
 import RecipeContext from '../provider/RecipesContext';
+import FavoriteButton from '../components/FavoriteButton';
+import ShareButton from '../components/ShareButton';
 
 const RECIPE_LIST_LENGTH = 6;
 
 function RecipesDetails() {
   const { inProgress, recipeInProgress } = useContext(RecipeContext);
-  const [heart, setHeart] = useState(whiteHeartIcon);
   const [recipe, setRecipe] = useState('');
   const [details, setDetails] = useState('');
   const [apiReturn, setApiReturn] = useState('');
   const [recomendRecipes, setRecomendRecipes] = useState([]);
   const [isDone, setIsDone] = useState(false);
-  const [copied, setCopied] = useState(false);
   const history = useHistory();
   const path = history.location.pathname;
   const id = path.replace(/[^0-9]/g, '');
@@ -60,45 +57,10 @@ function RecipesDetails() {
       }
     };
 
-    const recipeFavorite = () => {
-      const favoriteRecipes = JSON.parse(localStorage.getItem('favoriteRecipes'));
-      if (favoriteRecipes) {
-        const verifica = favoriteRecipes.some((rec) => rec.id === id);
-        setHeart(verifica ? blackHeartIcon : whiteHeartIcon);
-      }
-    };
-
     WhitchRecipe();
     recipeDone();
-    recipeFavorite();
     recipeInProgress(id);
   }, [id, path, recipeInProgress]);
-
-  const onClickFavorite = ({ target: { value } }) => {
-    const parseValue = JSON.parse(value);
-    const favoriteRecipes = JSON.parse(localStorage.getItem('favoriteRecipes'));
-    if (heart === whiteHeartIcon) {
-      const newFav = {
-        id: parseValue.idMeal || parseValue.idDrink,
-        type: recipe,
-        nationality: parseValue.strArea || '',
-        category: parseValue.strCategory || '',
-        alcoholicOrNot: parseValue.strAlcoholic || '',
-        name: parseValue.strMeal || parseValue.strDrink,
-        image: parseValue.strMealThumb || parseValue.strDrinkThumb,
-      };
-
-      const newFavList = favoriteRecipes ? [...favoriteRecipes, newFav] : [newFav];
-      localStorage.setItem('favoriteRecipes', JSON.stringify(newFavList));
-      setHeart(blackHeartIcon);
-    } else {
-      const newReduceFavorites = favoriteRecipes
-        .filter(({ id: foodId }) => foodId !== id);
-
-      localStorage.setItem('favoriteRecipes', JSON.stringify(newReduceFavorites));
-      setHeart(whiteHeartIcon);
-    }
-  };
 
   useEffect(() => {
     const getRecipeInAPI = async () => {
@@ -155,11 +117,6 @@ function RecipesDetails() {
     history.push(`/${recipe}s/${id}/in-progress`);
   };
 
-  const shareRecipe = () => {
-    navigator.clipboard.writeText(`http://localhost:3000${path}`);
-    setCopied(true);
-  };
-
   return (
     <main>
       <img
@@ -170,26 +127,16 @@ function RecipesDetails() {
       />
       <h1 data-testid="recipe-title">{details.name}</h1>
       <h2 data-testid="recipe-category">{details.category}</h2>
-      <input
-        type="image"
-        src={ shareIcon }
-        alt="Botão de compartilhamento"
-        data-testid="share-btn"
-        onClick={ shareRecipe }
+      <FavoriteButton
+        btnValue={ JSON.stringify(apiReturn) }
+        recipeID={ id }
+        recipeType={ recipe }
+        data="favorite-btn"
       />
-      <input
-        src={ heart }
-        type="image"
-        alt="Botão de favorito"
-        onClick={ onClickFavorite }
-        value={ JSON.stringify(apiReturn) }
-        data-testid="favorite-btn"
+      <ShareButton
+        path={ path }
+        data="share-btn"
       />
-      {
-        copied && (
-          <p>Link copied!</p>
-        )
-      }
       <h2>Ingredients</h2>
       <section className="ingredients">
         <ul>
