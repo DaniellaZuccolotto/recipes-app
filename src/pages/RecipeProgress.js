@@ -1,39 +1,24 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import shareIcon from '../images/shareIcon.svg';
-import whiteHeartIcon from '../images/whiteHeartIcon.svg';
-import blackHeartIcon from '../images/blackHeartIcon.svg';
 import requestApi from '../helpers/requestApi';
 import RecipeContext from '../provider/RecipesContext';
+import ShareButton from '../components/ShareButton';
+import FavoriteButton from '../components/FavoriteButton';
 
 function RecipeProgress() {
   const { verifyPath } = useContext(RecipeContext);
   const history = useHistory();
   const path = history.location.pathname;
   const idPath = path.replace(/[^0-9]/g, '');
-  const [heart, setHeart] = useState(whiteHeartIcon);
   const [recipeDetails, setRecipeDetails] = useState({});
   const [ingredientsDetails, setIngredientsDetails] = useState({});
   const [ingredientsCheckedList, setIngredientsCheckedList] = useState([]);
-  const [copied, setCopied] = useState(false);
   const [buttonFinish, setButtonFinish] = useState(true);
 
-  useEffect(() => {
-    const checkHeart = () => {
-      const getLocal = JSON.parse(localStorage.getItem('favoriteRecipes'));
-      if (getLocal) {
-        getLocal.some((favorite) => {
-          if (favorite.id === idPath) {
-            setHeart(blackHeartIcon);
-            return true;
-          }
-          setHeart(whiteHeartIcon);
-          return false;
-        });
-      }
-    };
-    checkHeart();
-  }, [idPath]);
+  const findRecipeType = () => {
+    if (path.includes('foods')) return 'food';
+    return 'drink';
+  };
 
   const getIngredient = () => {
     const MAX_LENGTH = 50;
@@ -138,38 +123,6 @@ function RecipeProgress() {
     }
   };
 
-  const onClickFavorite = ({ target: { value } }) => {
-    const parseValue = JSON.parse(value);
-    const favoriteRecipes = JSON.parse(localStorage.getItem('favoriteRecipes'));
-    if (heart === whiteHeartIcon) {
-      const newFav = {
-        id: parseValue.idMeal || parseValue.idDrink,
-        type: path.includes('foods') ? 'food' : 'drink',
-        nationality: parseValue.strArea || '',
-        category: parseValue.strCategory || '',
-        alcoholicOrNot: parseValue.strAlcoholic || '',
-        name: parseValue.strMeal || parseValue.strDrink,
-        image: parseValue.strMealThumb || parseValue.strDrinkThumb,
-      };
-
-      const newFavList = favoriteRecipes ? [...favoriteRecipes, newFav] : [newFav];
-      localStorage.setItem('favoriteRecipes', JSON.stringify(newFavList));
-      setHeart(blackHeartIcon);
-    } else {
-      const newReduceFavorites = favoriteRecipes
-        .filter(({ id: foodId }) => foodId !== idPath);
-
-      localStorage.setItem('favoriteRecipes', JSON.stringify(newReduceFavorites));
-      setHeart(whiteHeartIcon);
-    }
-  };
-
-  const shareRecipe = () => {
-    const pathName = path.includes('foods') ? 'foods' : 'drinks';
-    navigator.clipboard.writeText(`http://localhost:3000/${pathName}/${idPath}`);
-    setCopied(true);
-  };
-
   const riscar = (name) => ingredientsCheckedList
     .some((ingredient) => ingredient === name);
 
@@ -189,25 +142,12 @@ function RecipeProgress() {
               style={ { width: 100 } }
               data-testid="recipe-photo"
             />
-            <input
-              type="image"
-              src={ shareIcon }
-              alt="Botão de compartilhamento"
-              data-testid="share-btn"
-              onClick={ shareRecipe }
-            />
-            {
-              copied && (
-                <p>Link copied!</p>
-              )
-            }
-            <input
-              src={ heart }
-              type="image"
-              alt="Botão de favorito"
-              onClick={ onClickFavorite }
-              data-testid="favorite-btn"
-              value={ JSON.stringify(ingredientsDetails) }
+            <ShareButton path={ `/${findRecipeType()}s/${idPath}` } data="share-btn" />
+            <FavoriteButton
+              btnValue={ JSON.stringify(ingredientsDetails) }
+              recipeID={ idPath }
+              recipeType={ findRecipeType() }
+              data="favorite-btn"
             />
             <p data-testid="recipe-category">{ recipeDetails.category }</p>
             { getIngredient().map((ingredients, i) => (
