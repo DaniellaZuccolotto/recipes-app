@@ -1,20 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
-// import CardsIngredients from '../components/CardsIngredients';
-// import requestAPi from '../helpers/requestApi';
+import CardsIngredients from '../components/CardsIngredients';
+import requestAPi from '../helpers/requestApi';
 
-// const INGREDIENTS_LIST_LENGTH = 12;
+const INGREDIENTS_LIST_LENGTH = 12;
 
 function ExploreDrinksIngredients() {
-  const [/* ingredientsList, */setIngredientsList] = useState([]);
+  const [ingredientsList, setIngredientsList] = useState([]);
 
   const getIngredients = async () => {
-    const URL = 'www.thecocktaildb.com/api/json/v1/1/list.php?i=list';
-    const result = await fetch(URL);
-    const ingredients = await result.json();
-    console.log(ingredients);
-    setIngredientsList(ingredients);
+    const URL = 'https://www.thecocktaildb.com/api/json/v1/1/list.php?i=list';
+    const result = await requestAPi(URL);
+    setIngredientsList(result);
   };
 
   useEffect(() => {
@@ -25,19 +23,18 @@ function ExploreDrinksIngredients() {
     <div>
       <Header pageName="Explore Ingredients" searchEnabled={ false } />
 
-      {/* <section>
-        {
-          ingredientsList
-            .slice(0, INGREDIENTS_LIST_LENGTH).map((ingredient, index) => (
+      <section>
+        { ingredientsList.length > 0
+          && ingredientsList
+            .slice(0, INGREDIENTS_LIST_LENGTH).map(({ strIngredient1 }, index) => (
               <div key={ index }>
                 <CardsIngredients
-                  ingredients={ ingredient }
+                  ingredients={ strIngredient1 }
                   index={ index }
                   type="drinks"
                 />
-              </div>))
-        }
-      </section> */}
+              </div>))}
+      </section>
 
       <Footer />
     </div>

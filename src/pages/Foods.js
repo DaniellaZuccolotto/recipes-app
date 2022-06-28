@@ -9,7 +9,7 @@ const FOOD_LIST_LENGTH = 12;
 const FOOD_CATEG_LENGTH = 5;
 
 function Foods() {
-  const { dataApi, temporaryDataApi, setDataApi,
+  const { dataApi, setDataApi,
     cardsRecipes, setCardsRecipes } = useContext(RecipeContext);
   const [categories, setCategories] = useState([]);
   const [recipesList, setRecipesList] = useState([]);
@@ -50,18 +50,13 @@ function Foods() {
   };
 
   useEffect(() => {
-    findFoods();
+    if (dataApi.length === 0) findFoods();
     foodCateg();
-  }, []);
+  }, [dataApi]);
 
   useEffect(() => {
     setRecipesList(dataApi);
   }, [dataApi]);
-
-  useEffect(() => {
-    console.log(temporaryDataApi);
-    setRecipesList(temporaryDataApi);
-  }, []);
 
   useEffect(() => {
     if (cardsRecipes) setSelectedCat('None');

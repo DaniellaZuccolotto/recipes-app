@@ -11,8 +11,8 @@ function ExploreFoodsIngredients() {
 
   const getIngredients = async () => {
     const URL = 'https://www.themealdb.com/api/json/v1/1/list.php?i=list';
-    const ingredients = await requestAPi(URL);
-    setIngredientsList(ingredients);
+    const result = await requestAPi(URL);
+    setIngredientsList(result);
   };
 
   useEffect(() => {
@@ -25,10 +25,10 @@ function ExploreFoodsIngredients() {
       <section>
         {
           ingredientsList
-            .slice(0, INGREDIENTS_LIST_LENGTH).map((ingredient, index) => (
+            .slice(0, INGREDIENTS_LIST_LENGTH).map(({ strIngredient }, index) => (
               <div key={ index }>
                 <CardsIngredients
-                  ingredients={ ingredient }
+                  ingredients={ strIngredient }
                   index={ index }
                   type="foods"
                 />
