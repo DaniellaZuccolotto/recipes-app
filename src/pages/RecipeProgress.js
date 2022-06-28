@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import shareIcon from '../images/shareIcon.svg';
 import whiteHeartIcon from '../images/whiteHeartIcon.svg';
 import blackHeartIcon from '../images/blackHeartIcon.svg';
 import requestApi from '../helpers/requestApi';
+import RecipeContext from '../provider/RecipesContext';
 
 function RecipeProgress() {
+  const { verifyPath } = useContext(RecipeContext);
   const history = useHistory();
   const path = history.location.pathname;
   const idPath = path.replace(/[^0-9]/g, '');
@@ -14,6 +16,24 @@ function RecipeProgress() {
   const [ingredientsDetails, setIngredientsDetails] = useState({});
   const [ingredientsCheckedList, setIngredientsCheckedList] = useState([]);
   const [copied, setCopied] = useState(false);
+  const [buttonFinish, setButtonFinish] = useState(true);
+
+  useEffect(() => {
+    const checkHeart = () => {
+      const getLocal = JSON.parse(localStorage.getItem('favoriteRecipes'));
+      if (getLocal) {
+        getLocal.some((favorite) => {
+          if (favorite.id === idPath) {
+            setHeart(blackHeartIcon);
+            return true;
+          }
+          setHeart(whiteHeartIcon);
+          return false;
+        });
+      }
+    };
+    checkHeart();
+  }, [idPath]);
 
   const getIngredient = () => {
     const MAX_LENGTH = 50;
@@ -32,21 +52,33 @@ function RecipeProgress() {
   };
 
   useEffect(() => {
-    const checkHeart = () => {
-      const getLocal = JSON.parse(localStorage.getItem('favoriteRecipes'));
-      if (getLocal) {
-        getLocal.some((favorite) => {
-          if (favorite.id === idPath) {
-            setHeart(blackHeartIcon);
-            return true;
-          }
-          setHeart(whiteHeartIcon);
-          return false;
-        });
+    const getIngredientArray = () => {
+      const NUMBER_CINQUENTA = 50;
+      const ingredients = [];
+      for (let i = 1;
+        (i <= NUMBER_CINQUENTA) && (ingredientsDetails[`strIngredient${i}`] !== '')
+               && (ingredientsDetails[`strIngredient${i}`] !== null);
+        i += 1) {
+        ingredients.push(
+          ingredientsDetails[`strIngredient${i}`] + ingredientsDetails[`strMeasure${i}`],
+        );
+      }
+      if (ingredients.length === NUMBER_CINQUENTA) return null;
+      return ingredients;
+    };
+
+    const buttonFinishDisabled = () => {
+      if (ingredientsCheckedList.length !== 0 && getIngredientArray() !== null) {
+        if (ingredientsCheckedList.length === getIngredientArray().length) {
+          setButtonFinish(false);
+        } else {
+          setButtonFinish(true);
+        }
       }
     };
-    checkHeart();
-  }, [idPath]);
+
+    buttonFinishDisabled();
+  }, [ingredientsCheckedList, buttonFinish, ingredientsDetails]);
 
   useEffect(() => {
     const getRecipeInAPI = async () => {
@@ -82,53 +114,10 @@ function RecipeProgress() {
     getRecipeInAPI();
   }, [path, idPath]);
 
-  const verifyKey = (local, type, value) => (local[type][idPath]
-    ? [...local[type][idPath], value] : [value]);
-
   const onclickChecked = ({ target }) => {
     if (target.checked) {
       setIngredientsCheckedList((prevState) => [...prevState, target.value]);
-      const getLocal = JSON.parse(localStorage.getItem('inProgressRecipes'));
-      if (path.includes('foods')) {
-        if (getLocal) {
-          const food = {
-            ...getLocal,
-            meals: {
-              ...getLocal.meals,
-              [idPath]: verifyKey(getLocal, 'meals', target.value),
-            },
-          };
-          localStorage.setItem('inProgressRecipes', JSON.stringify(food));
-        } else {
-          const food = {
-            cocktails: {},
-            meals: {
-              [idPath]: [target.value],
-            },
-          };
-          localStorage.setItem('inProgressRecipes', JSON.stringify(food));
-        }
-      }
-      if (path.includes('drinks')) {
-        if (getLocal) {
-          const drink = {
-            ...getLocal,
-            cocktails: {
-              ...getLocal.cocktails,
-              [idPath]: verifyKey(getLocal, 'cocktails', target.value),
-            },
-          };
-          localStorage.setItem('inProgressRecipes', JSON.stringify(drink));
-        } else {
-          const drink = {
-            meals: {},
-            cocktails: {
-              [idPath]: [target.value],
-            },
-          };
-          localStorage.setItem('inProgressRecipes', JSON.stringify(drink));
-        }
-      }
+      verifyPath(target.value, idPath);
     } else {
       const removeChecked = ingredientsCheckedList.filter(
         (item) => item !== target.value,
@@ -149,20 +138,44 @@ function RecipeProgress() {
     }
   };
 
-  const onClickFavorite = () => {
+  const onClickFavorite = ({ target: { value } }) => {
+    const parseValue = JSON.parse(value);
+    const favoriteRecipes = JSON.parse(localStorage.getItem('favoriteRecipes'));
     if (heart === whiteHeartIcon) {
-      return setHeart(blackHeartIcon);
+      const newFav = {
+        id: parseValue.idMeal || parseValue.idDrink,
+        type: path.includes('foods') ? 'food' : 'drink',
+        nationality: parseValue.strArea || '',
+        category: parseValue.strCategory || '',
+        alcoholicOrNot: parseValue.strAlcoholic || '',
+        name: parseValue.strMeal || parseValue.strDrink,
+        image: parseValue.strMealThumb || parseValue.strDrinkThumb,
+      };
+
+      const newFavList = favoriteRecipes ? [...favoriteRecipes, newFav] : [newFav];
+      localStorage.setItem('favoriteRecipes', JSON.stringify(newFavList));
+      setHeart(blackHeartIcon);
+    } else {
+      const newReduceFavorites = favoriteRecipes
+        .filter(({ id: foodId }) => foodId !== idPath);
+
+      localStorage.setItem('favoriteRecipes', JSON.stringify(newReduceFavorites));
+      setHeart(whiteHeartIcon);
     }
-    return setHeart(whiteHeartIcon);
   };
 
   const shareRecipe = () => {
-    navigator.clipboard.writeText(`http://localhost:3000${path}`);
+    const pathName = path.includes('foods') ? 'foods' : 'drinks';
+    navigator.clipboard.writeText(`http://localhost:3000/${pathName}/${idPath}`);
     setCopied(true);
   };
 
   const riscar = (name) => ingredientsCheckedList
     .some((ingredient) => ingredient === name);
+
+  const onClickFinish = () => {
+    history.push('/done-recipes');
+  };
 
   return (
     <div>
@@ -194,6 +207,7 @@ function RecipeProgress() {
               alt="Botão de favorito"
               onClick={ onClickFavorite }
               data-testid="favorite-btn"
+              value={ JSON.stringify(ingredientsDetails) }
             />
             <p data-testid="recipe-category">{ recipeDetails.category }</p>
             { getIngredient().map((ingredients, i) => (
@@ -210,12 +224,17 @@ function RecipeProgress() {
                   name={ ingredients }
                   value={ ingredients }
                   checked={ checkedIngredients(ingredients) }
-                  onClick={ onclickChecked }
+                  onChange={ onclickChecked }
                 />
               </label>
             ))}
             <p data-testid="instructions">{ recipeDetails.instructions }</p>
-            <button type="button" data-testid="finish-recipe-btn">
+            <button
+              type="button"
+              data-testid="finish-recipe-btn"
+              disabled={ buttonFinish }
+              onClick={ onClickFinish }
+            >
               Finalizar
             </button>
           </main>
