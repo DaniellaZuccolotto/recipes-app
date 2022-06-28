@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import shareIcon from '../images/shareIcon.svg';
 
@@ -31,18 +32,6 @@ function DoneRecipes() {
       return setFiltredRecipes(doneRecipes());
     }
   };
-
-  // const doneRecipes = [{
-  //   id: id - da - receita,
-  //   type: comida - ou - bebida,
-  //   nationality: nacionalidade - da - receita - ou - texto - vazio,
-  //   category: categoria - da - receita - ou - texto - vazio,
-  //   alcoholicOrNot: alcoholic - ou - non - alcoholic - ou - texto - vazio,
-  //   name: nome - da - receita,
-  //   image: imagem - da - receita,
-  //   doneDate: quando - a - receita - foi - concluida,
-  //   tags: array - de - tags - da - receita - ou - array - vazio,
-  // }];
 
   return (
     <div>
@@ -81,11 +70,14 @@ function DoneRecipes() {
         {
           filtredRecipes.map((recipe, index) => (
             <div key={ index }>
-              <img
-                src={ recipe.image }
-                alt={ recipe.name }
-                data-testid={ `${index}-horizontal-image` }
-              />
+              <Link to={ `/${recipe.type}s/${recipe.id}` }>
+                <img
+                  src={ recipe.image }
+                  alt={ recipe.name }
+                  data-testid={ `${index}-horizontal-image` }
+                  style={ { width: '150px' } }
+                />
+              </Link>
               {
                 recipe.type === 'food' ? (
                   <p data-testid={ `${index}-horizontal-top-text` }>
@@ -97,9 +89,11 @@ function DoneRecipes() {
                   </p>
                 )
               }
-              <p data-testid={ `${index}-horizontal-name` }>
-                {recipe.name}
-              </p>
+              <Link to={ `/${recipe.type}s/${recipe.id}` }>
+                <p data-testid={ `${index}-horizontal-name` }>
+                  {recipe.name}
+                </p>
+              </Link>
               <p data-testid={ `${index}-horizontal-done-date` }>
                 {recipe.doneDate}
               </p>
