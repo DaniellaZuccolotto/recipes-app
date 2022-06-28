@@ -11,7 +11,7 @@ function FavoriteRecipes() {
 
   const getFavorites = () => {
     const results = localStorage.getItem('favoriteRecipes');
-    setFavorites(JSON.parse(results));
+    setFavorites(JSON.parse(results) || []);
   };
 
   const onFilterClick = ({ target: { value } }) => {
@@ -55,8 +55,8 @@ function FavoriteRecipes() {
             Drinks
           </button>
         </div>
-        {
-          favorites
+        { favorites.length > 0
+          ? favorites
             .filter((recipe) => {
               if (filter === 'all') return true;
               return recipe.type === filter;
@@ -105,7 +105,7 @@ function FavoriteRecipes() {
                 </section>
               </div>
             ))
-        }
+          : <h2>No favorites yet!</h2> }
       </main>
     </div>
   );
