@@ -1,18 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import shareIcon from '../images/shareIcon.svg';
-import whiteHeartIcon from '../images/whiteHeartIcon.svg';
-import blackHeartIcon from '../images/blackHeartIcon.svg';
 import requestApi from '../helpers/requestApi';
+import RecipeContext from '../provider/RecipesContext';
+import ShareButton from '../components/ShareButton';
+import FavoriteButton from '../components/FavoriteButton';
 
 function RecipeProgress() {
-  const [heart, setHeart] = useState(whiteHeartIcon);
-  const [recipeDetails, setRecipeDetails] = useState({});
-  const [ingredientsDetails, setIngredientsDetails] = useState({});
-  const [ingredientsCheckedList, setIngredientsCheckedList] = useState([]);
+  const { verifyPath } = useContext(RecipeContext);
   const history = useHistory();
   const path = history.location.pathname;
   const idPath = path.replace(/[^0-9]/g, '');
+  const [recipeDetails, setRecipeDetails] = useState({});
+  const [ingredientsDetails, setIngredientsDetails] = useState({});
+  const [ingredientsCheckedList, setIngredientsCheckedList] = useState([]);
+  const [buttonFinish, setButtonFinish] = useState(true);
+
+  const findRecipeType = () => {
+    if (path.includes('foods')) return 'food';
+    return 'drink';
+  };
 
   const getIngredient = () => {
     const MAX_LENGTH = 50;
@@ -29,6 +35,35 @@ function RecipeProgress() {
     if (ingredients.length === NUMBER_CINQUENTA) return null;
     return ingredients;
   };
+
+  useEffect(() => {
+    const getIngredientArray = () => {
+      const NUMBER_CINQUENTA = 50;
+      const ingredients = [];
+      for (let i = 1;
+        (i <= NUMBER_CINQUENTA) && (ingredientsDetails[`strIngredient${i}`] !== '')
+               && (ingredientsDetails[`strIngredient${i}`] !== null);
+        i += 1) {
+        ingredients.push(
+          ingredientsDetails[`strIngredient${i}`] + ingredientsDetails[`strMeasure${i}`],
+        );
+      }
+      if (ingredients.length === NUMBER_CINQUENTA) return null;
+      return ingredients;
+    };
+
+    const buttonFinishDisabled = () => {
+      if (ingredientsCheckedList.length !== 0 && getIngredientArray() !== null) {
+        if (ingredientsCheckedList.length === getIngredientArray().length) {
+          setButtonFinish(false);
+        } else {
+          setButtonFinish(true);
+        }
+      }
+    };
+
+    buttonFinishDisabled();
+  }, [ingredientsCheckedList, buttonFinish, ingredientsDetails]);
 
   useEffect(() => {
     const getRecipeInAPI = async () => {
@@ -67,6 +102,7 @@ function RecipeProgress() {
   const onclickChecked = ({ target }) => {
     if (target.checked) {
       setIngredientsCheckedList((prevState) => [...prevState, target.value]);
+      verifyPath(target.value, idPath);
     } else {
       const removeChecked = ingredientsCheckedList.filter(
         (item) => item !== target.value,
@@ -75,15 +111,24 @@ function RecipeProgress() {
     }
   };
 
-  const onClickFavorite = () => {
-    if (heart === whiteHeartIcon) {
-      return setHeart(blackHeartIcon);
+  const checkedIngredients = (ingredient) => {
+    const getLocal = JSON.parse(localStorage.getItem('inProgressRecipes'));
+    if (getLocal) {
+      if (path.includes('foods') && getLocal.meals[idPath]) {
+        return getLocal.meals[idPath].includes(ingredient);
+      }
+      if (path.includes('drinks') && getLocal.cocktails[idPath]) {
+        return getLocal.cocktails[idPath].includes(ingredient);
+      }
     }
-    return setHeart(whiteHeartIcon);
   };
 
   const riscar = (name) => ingredientsCheckedList
     .some((ingredient) => ingredient === name);
+
+  const onClickFinish = () => {
+    history.push('/done-recipes');
+  };
 
   return (
     <div>
@@ -97,18 +142,12 @@ function RecipeProgress() {
               style={ { width: 100 } }
               data-testid="recipe-photo"
             />
-            <input
-              type="image"
-              src={ shareIcon }
-              alt="Botão de compartilhamento"
-              data-testid="share-btn"
-            />
-            <input
-              src={ heart }
-              type="image"
-              alt="Botão de compartilhamento"
-              onClick={ onClickFavorite }
-              data-testid="favorite-btn"
+            <ShareButton path={ `/${findRecipeType()}s/${idPath}` } data="share-btn" />
+            <FavoriteButton
+              btnValue={ JSON.stringify(ingredientsDetails) }
+              recipeID={ idPath }
+              recipeType={ findRecipeType() }
+              data="favorite-btn"
             />
             <p data-testid="recipe-category">{ recipeDetails.category }</p>
             { getIngredient().map((ingredients, i) => (
@@ -124,12 +163,18 @@ function RecipeProgress() {
                   type="checkbox"
                   name={ ingredients }
                   value={ ingredients }
-                  onClick={ onclickChecked }
+                  checked={ checkedIngredients(ingredients) }
+                  onChange={ onclickChecked }
                 />
               </label>
             ))}
             <p data-testid="instructions">{ recipeDetails.instructions }</p>
-            <button type="button" data-testid="finish-recipe-btn">
+            <button
+              type="button"
+              data-testid="finish-recipe-btn"
+              disabled={ buttonFinish }
+              onClick={ onClickFinish }
+            >
               Finalizar
             </button>
           </main>
