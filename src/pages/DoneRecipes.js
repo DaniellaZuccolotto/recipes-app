@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
-import shareIcon from '../images/shareIcon.svg';
+import ShareButton from '../components/ShareButton';
 
 function DoneRecipes() {
-  const [copied, setCopied] = useState(false);
   const [recipes, setRecipes] = useState([]);
   const [filtredRecipes, setFiltredRecipes] = useState([]);
 
@@ -97,15 +96,9 @@ function DoneRecipes() {
               <p data-testid={ `${index}-horizontal-done-date` }>
                 {recipe.doneDate}
               </p>
-              <input
-                type="image"
-                src={ shareIcon }
-                alt="Botão de compartilhamento"
-                data-testid={ `${index}-horizontal-share-btn` }
-                onClick={ () => {
-                  navigator.clipboard.writeText(`http://localhost:3000/${recipe.type}s/${recipe.id}`);
-                  setCopied(true);
-                } }
+              <ShareButton
+                path={ `/${recipe.type}s/${recipe.id}` }
+                data={ `${index}-horizontal-share-btn` }
               />
               <div>
                 {
@@ -119,13 +112,6 @@ function DoneRecipes() {
                   ))
                 }
               </div>
-              {
-                copied ? (
-                  <p>Link copied!</p>
-                ) : (
-                  null
-                )
-              }
             </div>
           ))
         }
