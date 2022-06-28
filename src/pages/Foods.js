@@ -50,9 +50,9 @@ function Foods() {
   };
 
   useEffect(() => {
-    findFoods();
+    if (dataApi.length === 0) findFoods();
     foodCateg();
-  }, []);
+  }, [dataApi]);
 
   useEffect(() => {
     setRecipesList(dataApi);

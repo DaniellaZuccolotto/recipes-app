@@ -60,13 +60,13 @@ function Header({ pageName, searchEnabled }) {
     let URL;
     if (type === 'foods') URL = findEndPoint('themealdb');
     if (type === 'drinks') URL = findEndPoint('thecocktaildb');
-    const recive = await requestApi(URL);
+    const recipe = await requestApi(URL);
 
-    if (recive === null || !recive.length) {
+    if (recipe === null || !recipe.length) {
       global.alert('Sorry, we haven\'t found any recipes for these filters.');
     } else {
-      setDataApi(recive);
-      verifyQuantidade(recive.length, recive[0], type);
+      setDataApi(recipe);
+      verifyQuantidade(recipe.length, recipe[0], type);
     }
   };
 

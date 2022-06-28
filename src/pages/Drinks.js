@@ -50,9 +50,9 @@ function Drinks() {
   };
 
   useEffect(() => {
-    findDrinks();
+    if (dataApi.length === 0) findDrinks();
     drinkCateg();
-  }, []);
+  }, [dataApi]);
 
   useEffect(() => {
     setRecipesList(dataApi);

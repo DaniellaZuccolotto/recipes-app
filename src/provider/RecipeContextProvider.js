@@ -18,6 +18,7 @@ function RecipeContextProvider({ children }) {
   });
 
   const [dataApi, setDataApi] = useState([]);
+  const [temporaryDataApi, setTemporaryDataApi] = useState([]);
   const [inProgress, setInProgress] = useState('Start Recipe');
   const [cardsRecipes, setCardsRecipes] = useState(false);
 
@@ -95,6 +96,8 @@ function RecipeContextProvider({ children }) {
     setLoginData,
     searchData,
     setSearchData,
+    temporaryDataApi,
+    setTemporaryDataApi,
     dataApi,
     setDataApi,
     verifyQuantidade,
