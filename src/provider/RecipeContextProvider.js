@@ -48,6 +48,48 @@ function RecipeContextProvider({ children }) {
     }
   };
 
+  const verifyKey = (local, type, value, idPath) => (local[type][idPath]
+    ? [...local[type][idPath], value] : [value]);
+
+  const getLocalExist = (getLocal, type, value, idPath) => {
+    const saveObj = {
+      ...getLocal,
+      [type]: {
+        ...getLocal[type],
+        [idPath]: verifyKey(getLocal, type, value, idPath),
+      },
+    };
+    localStorage.setItem('inProgressRecipes', JSON.stringify(saveObj));
+  };
+
+  const getLocalNotExist = (type, value, idPath) => {
+    const saveObj = {
+      [type === 'meals' ? 'cocktails' : type]: {},
+      [type]: {
+        [idPath]: [value],
+      },
+    };
+    localStorage.setItem('inProgressRecipes', JSON.stringify(saveObj));
+  };
+
+  const verifyPath = (value, idPath) => {
+    const getLocal = JSON.parse(localStorage.getItem('inProgressRecipes'));
+    if (path.includes('foods')) {
+      if (getLocal) {
+        getLocalExist(getLocal, 'meals', value, idPath);
+      } else {
+        getLocalNotExist('meals', value, idPath);
+      }
+    }
+    if (path.includes('drinks')) {
+      if (getLocal) {
+        getLocalExist(getLocal, 'cocktails', value, idPath);
+      } else {
+        getLocalNotExist('cocktails', value, idPath);
+      }
+    }
+  };
+
   const contextValue = {
     loginData,
     setLoginData,
@@ -61,6 +103,7 @@ function RecipeContextProvider({ children }) {
     recipeInProgress,
     inProgress,
     setInProgress,
+    verifyPath,
   };
 
   return (
