@@ -4,6 +4,10 @@ import React from 'react';
 import App from '../App';
 import renderWithRouter from './helpers/renderWithRouter';
 
+const EXPECT_URL = 'https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Shake';
+const URL = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=';
+const RECIPIES_LIST_LENGTH = 12;
+
 describe('Testa a página Foods', () => {
   test('Verificar se é chamado o endPoint correto da api de Drinks', () => {
     const { history } = renderWithRouter(<App />);
@@ -93,7 +97,6 @@ describe('Testa a página Foods', () => {
     const { history } = renderWithRouter(<App />);
     history.push('/drinks');
 
-    const RECIPIES_LIST_LENGTH = 12;
     const recipiesImg = await screen.findAllByRole('img');
     expect(recipiesImg.length).toBe(RECIPIES_LIST_LENGTH);
   });
@@ -107,14 +110,8 @@ describe('Testa a página Foods', () => {
       name: /shake/i,
     });
 
-    const EXPECT_URL = 'https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Shake';
-    const URL = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=';
-
     userEvent.click(shakeButton);
     expect(fetch).toHaveBeenCalledWith(EXPECT_URL);
-
-    userEvent.click(shakeButton);
-    expect(fetch).toHaveBeenCalledWith(URL);
 
     const allBtn = await screen.findByRole('button', {
       name: /all/i,
@@ -124,6 +121,29 @@ describe('Testa a página Foods', () => {
 
     fetch.mockRestore();
   });
+
+  test('Ao clicar no mesmo botão de filtro duas vezes, deve remover o filtro',
+    async () => {
+      const { history } = renderWithRouter(<App />);
+      history.push('/drinks');
+      const fetch = jest.spyOn(global, 'fetch');
+
+      const shakeButton = await screen.findByRole('button', {
+        name: /shake/i,
+      });
+
+      userEvent.click(shakeButton);
+      expect(fetch).toHaveBeenCalledWith(EXPECT_URL);
+      const shakeImg = await screen.findAllByRole('img');
+      expect(shakeImg.length).toBe(RECIPIES_LIST_LENGTH);
+
+      userEvent.click(shakeButton);
+      expect(fetch).toHaveBeenCalledWith(URL);
+      const recipiesImg = await screen.findAllByRole('img');
+      expect(recipiesImg.length).toBe(RECIPIES_LIST_LENGTH);
+
+      fetch.mockRestore();
+    });
 
   test('Caso não encontre nenhuma receita, exibe a mensagem apropriada em Drinks',
     () => {
@@ -150,7 +170,7 @@ describe('Testa a página Foods', () => {
       userEvent.click(nameFilter);
       userEvent.click(searchBtn);
 
-      const WAIT_SEC = 3000;
+      const WAIT_SEC = 2000;
       setTimeout(() => {
         expect(alert).toHaveBeenCalledWith(alertMsg);
       }, WAIT_SEC);
