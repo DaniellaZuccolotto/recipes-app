@@ -151,6 +151,21 @@ function RecipeProgress() {
   };
 
   const onClickFinish = () => {
+    const date = new Date();
+    const done = JSON.parse(localStorage.getItem('doneRecipes'));
+    const newDoneRecipe = {
+      id: ingredientsDetails.idMeal || ingredientsDetails.idDrink,
+      type: findRecipeType(),
+      nationality: ingredientsDetails.strArea || '',
+      category: ingredientsDetails.strCategory || '',
+      alcoholicOrNot: ingredientsDetails.strAlcoholic,
+      name: ingredientsDetails.strMeal || ingredientsDetails.strDrink,
+      image: ingredientsDetails.strMealThumb || ingredientsDetails.strDrinkThumb,
+      doneDate: `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`,
+      tags: [ingredientsDetails.strTags] || '',
+    };
+    const doneRecipe = done ? [...done, newDoneRecipe] : [newDoneRecipe];
+    localStorage.setItem('doneRecipes', JSON.stringify(doneRecipe));
     history.push('/done-recipes');
   };
 
