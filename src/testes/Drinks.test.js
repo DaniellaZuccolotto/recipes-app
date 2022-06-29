@@ -56,40 +56,6 @@ describe('Testa a página Foods', () => {
     spy.mockRestore();
   });
 
-  test('Caso não encontre nenhuma receita, exibe a mensagem apropriada em Drinks',
-    () => {
-      const { history } = renderWithRouter(<App />);
-      history.push('/drinks');
-      const fetch = jest.spyOn(global, 'fetch');
-      const alert = jest.spyOn(global, 'alert');
-      const alertMsg = 'Sorry, we haven\'t found any recipes for these filters.';
-
-      const searchIcon = screen.getByRole('button', {
-        name: /open-search/i,
-      });
-      userEvent.click(searchIcon);
-
-      const nameFilter = screen.getByRole('radio', { name: /name/i });
-      const searchText = screen.getByRole('textbox');
-      const searchBtn = screen.getByRole('button', { name: 'Search' });
-
-      fetch.mockResolvedValue({
-        json: jest.fn().mockResolvedValue(null),
-      });
-
-      userEvent.type(searchText, 'lalala');
-      userEvent.click(nameFilter);
-      userEvent.click(searchBtn);
-
-      const WAIT_SEC = 3000;
-      setTimeout(() => {
-        expect(alert).toHaveBeenCalledWith(alertMsg);
-      }, WAIT_SEC);
-
-      fetch.mockRestore();
-      alert.mockRestore();
-    });
-
   test('Se os botões de categoria são rederizados', async () => {
     const { history } = renderWithRouter(<App />);
     history.push('/drinks');
@@ -158,4 +124,38 @@ describe('Testa a página Foods', () => {
 
     fetch.mockRestore();
   });
+
+  test('Caso não encontre nenhuma receita, exibe a mensagem apropriada em Drinks',
+    () => {
+      const { history } = renderWithRouter(<App />);
+      history.push('/drinks');
+      const fetch = jest.spyOn(global, 'fetch');
+      const alert = jest.spyOn(global, 'alert');
+      const alertMsg = 'Sorry, we haven\'t found any recipes for these filters.';
+
+      const searchIcon = screen.getByRole('button', {
+        name: /open-search/i,
+      });
+      userEvent.click(searchIcon);
+
+      const nameFilter = screen.getByRole('radio', { name: /name/i });
+      const searchText = screen.getByRole('textbox');
+      const searchBtn = screen.getByRole('button', { name: 'Search' });
+
+      fetch.mockResolvedValue({
+        json: jest.fn().mockResolvedValue(null),
+      });
+
+      userEvent.type(searchText, 'lalala');
+      userEvent.click(nameFilter);
+      userEvent.click(searchBtn);
+
+      const WAIT_SEC = 3000;
+      setTimeout(() => {
+        expect(alert).toHaveBeenCalledWith(alertMsg);
+      }, WAIT_SEC);
+
+      fetch.mockRestore();
+      alert.mockRestore();
+    });
 });

@@ -5,6 +5,10 @@ import App from '../App';
 import renderWithRouter from './helpers/renderWithRouter';
 import { mockFoodRecipe, mockFoodCategories } from './helpers/mockFoodResults';
 
+const RECIPIES_LIST_LENGTH = 12;
+const EXPECT_URL = 'https://www.themealdb.com/api/json/v1/1/filter.php?c=Beef';
+const URL = 'https://www.themealdb.com/api/json/v1/1/search.php?s=';
+
 describe('Testa a página Foods', () => {
   test('Verificar se é chamado o endPoint correto da api de Foods', () => {
     const { history } = renderWithRouter(<App />);
@@ -57,40 +61,6 @@ describe('Testa a página Foods', () => {
     spy.mockRestore();
   });
 
-  test('Caso não encontre nenhuma receita, exibe a mensagem apropriada',
-    () => {
-      const { history } = renderWithRouter(<App />);
-      history.push('/foods');
-      const fetch = jest.spyOn(global, 'fetch');
-      const alert = jest.spyOn(global, 'alert');
-      const alertMsg = 'Sorry, we haven\'t found any recipes for these filters.';
-
-      const searchIcon = screen.getByRole('button', {
-        name: /open-search/i,
-      });
-      userEvent.click(searchIcon);
-
-      const nameFilter = screen.getByRole('radio', { name: /name/i });
-      const searchText = screen.getByRole('textbox');
-      const searchBtn = screen.getByRole('button', { name: 'Search' });
-
-      fetch.mockResolvedValue({
-        json: jest.fn().mockResolvedValue(null),
-      });
-
-      userEvent.type(searchText, 'lalala');
-      userEvent.click(nameFilter);
-      userEvent.click(searchBtn);
-
-      const WAIT_SEC = 2000;
-      setTimeout(() => {
-        expect(alert).toHaveBeenCalledWith(alertMsg);
-      }, WAIT_SEC);
-
-      fetch.mockRestore();
-      alert.mockRestore();
-    });
-
   test('Se os botões de categoria são rederizados', async () => {
     const { history } = renderWithRouter(<App />);
     history.push('/foods');
@@ -137,7 +107,6 @@ describe('Testa a página Foods', () => {
         json: jest.fn().mockResolvedValue(mockFoodCategories),
       });
 
-    const RECIPIES_LIST_LENGTH = 12;
     const recipiesImg = await screen.findAllByRole('img');
     expect(recipiesImg.length).toBe(RECIPIES_LIST_LENGTH);
 
@@ -160,21 +129,87 @@ describe('Testa a página Foods', () => {
       name: /beef/i,
     });
 
-    const EXPECT_URL = 'https://www.themealdb.com/api/json/v1/1/filter.php?c=Beef';
-    const URL = 'https://www.themealdb.com/api/json/v1/1/search.php?s=';
-
     userEvent.click(beefButton);
     expect(fetch).toHaveBeenCalledWith(EXPECT_URL);
-
-    userEvent.click(beefButton);
-    expect(fetch).toHaveBeenCalledWith(URL);
+    const beefRecipe = await screen.findAllByRole('heading', { name: /beef/i });
+    const beefImg = await screen.findAllByRole('img');
+    expect(beefRecipe).toBeDefined();
+    expect(beefImg.length).toBe(RECIPIES_LIST_LENGTH);
 
     const allBtn = await screen.findByRole('button', {
       name: /all/i,
     });
     userEvent.click(allBtn);
     expect(fetch).toHaveBeenCalledWith(URL);
+    const recipiesImg = await screen.findAllByRole('img');
+    expect(recipiesImg.length).toBe(RECIPIES_LIST_LENGTH);
 
     fetch.mockRestore();
   });
+
+  test('Ao clicar no mesmo botão de filtro duas vezes, deve remover o filtro',
+    async () => {
+      const { history } = renderWithRouter(<App />);
+      history.push('/foods');
+      const fetch = jest.spyOn(global, 'fetch');
+
+      fetch.mockResolvedValueOnce(({
+        json: jest.fn().mockResolvedValue(mockFoodRecipe),
+      }))
+        .mockResolvedValueOnce({
+          json: jest.fn().mockResolvedValue(mockFoodCategories),
+        });
+
+      const beefButton = await screen.findByRole('button', {
+        name: /beef/i,
+      });
+
+      userEvent.click(beefButton);
+      expect(fetch).toHaveBeenCalledWith(EXPECT_URL);
+      const beefRecipe = await screen.findAllByRole('heading', { name: /beef/i });
+      const beefImg = await screen.findAllByRole('img');
+      expect(beefRecipe).toBeDefined();
+      expect(beefImg.length).toBe(RECIPIES_LIST_LENGTH);
+
+      userEvent.click(beefButton);
+      expect(fetch).toHaveBeenCalledWith(URL);
+      const recipiesImg = await screen.findAllByRole('img');
+      expect(recipiesImg.length).toBe(RECIPIES_LIST_LENGTH);
+
+      fetch.mockRestore();
+    });
+
+  test('Caso não encontre nenhuma receita, exibe a mensagem apropriada',
+    () => {
+      const { history } = renderWithRouter(<App />);
+      history.push('/foods');
+      const fetch = jest.spyOn(global, 'fetch');
+      const alert = jest.spyOn(global, 'alert');
+      const alertMsg = 'Sorry, we haven\'t found any recipes for these filters.';
+
+      const searchIcon = screen.getByRole('button', {
+        name: /open-search/i,
+      });
+      userEvent.click(searchIcon);
+
+      const nameFilter = screen.getByRole('radio', { name: /name/i });
+      const searchText = screen.getByRole('textbox');
+      const searchBtn = screen.getByRole('button', { name: 'Search' });
+
+      fetch.mockResolvedValue({
+        json: jest.fn().mockResolvedValue(null),
+      });
+
+      userEvent.type(searchText, 'lalala');
+      userEvent.click(nameFilter);
+      userEvent.click(searchBtn);
+
+      const WAIT_SEC = 3000;
+      setTimeout(() => {
+        expect(alert).toHaveBeenCalledWith(alertMsg);
+      }, WAIT_SEC);
+
+      fetch.mockRestore();
+      alert.mockRestore();
+    });
 });
