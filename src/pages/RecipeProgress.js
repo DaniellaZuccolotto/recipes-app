@@ -53,17 +53,19 @@ function RecipeProgress() {
     };
 
     const buttonFinishDisabled = () => {
-      if (ingredientsCheckedList.length !== 0 && getIngredientArray() !== null) {
-        if (ingredientsCheckedList.length === getIngredientArray().length) {
+      const getLocal = JSON.parse(localStorage.getItem('inProgressRecipes'));
+      const type = path.includes('foods') ? 'meals' : 'cocktails';
+      if (getLocal && getIngredientArray() !== null) {
+        const ingredientsChecked = getLocal[type][idPath];
+        if (ingredientsChecked.length === getIngredientArray().length) {
           setButtonFinish(false);
         } else {
           setButtonFinish(true);
         }
       }
     };
-
     buttonFinishDisabled();
-  }, [ingredientsCheckedList, buttonFinish, ingredientsDetails]);
+  }, [ingredientsCheckedList, buttonFinish, ingredientsDetails, path, idPath]);
 
   useEffect(() => {
     const getRecipeInAPI = async () => {
@@ -108,6 +110,19 @@ function RecipeProgress() {
         (item) => item !== target.value,
       );
       setIngredientsCheckedList(removeChecked);
+      const getLocal = JSON.parse(localStorage.getItem('inProgressRecipes'));
+      const type = path.includes('foods') ? 'meals' : 'cocktails';
+      const ingredientsLocal = getLocal[type][idPath];
+      const removeLocal = ingredientsLocal
+        .filter((ingredients) => ingredients !== target.value);
+      const saveObj = {
+        ...getLocal,
+        [type]: {
+          ...getLocal[type],
+          [idPath]: removeLocal,
+        },
+      };
+      localStorage.setItem('inProgressRecipes', JSON.stringify(saveObj));
     }
   };
 
@@ -123,8 +138,17 @@ function RecipeProgress() {
     }
   };
 
-  const riscar = (name) => ingredientsCheckedList
-    .some((ingredient) => ingredient === name);
+  const riscar = (name) => {
+    const getLocal = JSON.parse(localStorage.getItem('inProgressRecipes'));
+    const type = path.includes('foods') ? 'meals' : 'cocktails';
+    if (getLocal) {
+      const ingredientsChecked = getLocal[type][idPath];
+      return ingredientsChecked
+        .some((ingredient) => ingredient === name);
+    }
+    return ingredientsCheckedList
+      .some((ingredient) => ingredient === name);
+  };
 
   const onClickFinish = () => {
     const date = new Date();
@@ -172,7 +196,6 @@ function RecipeProgress() {
                 key={ i }
                 style={ riscar(ingredients) ? { textDecoration: 'line-through' } : null }
               >
-                { ingredients }
                 <input
                   id={ `ingredient-${i}` }
                   type="checkbox"
@@ -181,6 +204,7 @@ function RecipeProgress() {
                   checked={ checkedIngredients(ingredients) }
                   onChange={ onclickChecked }
                 />
+                { ingredients }
               </label>
             ))}
             <p data-testid="instructions">{ recipeDetails.instructions }</p>
