@@ -32,6 +32,15 @@ function DoneRecipes() {
     }
   };
 
+  const tags = (chave) => {
+    if (chave === null) {
+      chave = '';
+    }
+    console.log(chave);
+    const tagsArray = chave.split(',');
+    return tagsArray;
+  };
+
   return (
     <div>
       <div>
@@ -102,7 +111,7 @@ function DoneRecipes() {
               />
               <div>
                 {
-                  recipe.tags.slice(0, 2).map((tagName) => (
+                  tags(recipe.tags[0]).slice(0, 2).map((tagName) => (
                     <p
                       key={ tagName }
                       data-testid={ `${index}-${tagName}-horizontal-tag` }

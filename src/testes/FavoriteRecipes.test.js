@@ -116,6 +116,12 @@ describe('Testes da página FavoriteRecipes', () => {
 
       userEvent.click(shareBTNQuant[0]);
       expect(copiar).toBeCalledWith('http://localhost:3000/foods/52977');
+      expect(screen.getByText(/link copied!/i)).toBeInTheDocument();
+
+      const WAIT_MSG = 3500;
+      setTimeout(() => {
+        expect(screen.getByText(/link copied!/i)).not.toBeInTheDocument();
+      }, WAIT_MSG);
 
       userEvent.click(shareBTNQuant[1]);
       expect(copiar).toBeCalledWith('http://localhost:3000/drinks/15997');
