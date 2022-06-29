@@ -32,15 +32,6 @@ function DoneRecipes() {
     }
   };
 
-  const tags = (chave) => {
-    if (chave === null) {
-      chave = '';
-    }
-    console.log(chave);
-    const tagsArray = chave.split(',');
-    return tagsArray;
-  };
-
   return (
     <div>
       <div>
@@ -76,53 +67,57 @@ function DoneRecipes() {
       </div>
       <div>
         {
-          filtredRecipes.map((recipe, index) => (
-            <div key={ index }>
-              <Link to={ `/${recipe.type}s/${recipe.id}` }>
-                <img
-                  src={ recipe.image }
-                  alt={ recipe.name }
-                  data-testid={ `${index}-horizontal-image` }
-                  style={ { width: '150px' } }
-                />
-              </Link>
-              {
-                recipe.type === 'food' ? (
-                  <p data-testid={ `${index}-horizontal-top-text` }>
-                    {`${recipe.nationality} - ${recipe.category}`}
-                  </p>
-                ) : (
-                  <p data-testid={ `${index}-horizontal-top-text` }>
-                    {recipe.alcoholicOrNot}
-                  </p>
-                )
-              }
-              <Link to={ `/${recipe.type}s/${recipe.id}` }>
-                <p data-testid={ `${index}-horizontal-name` }>
-                  {recipe.name}
-                </p>
-              </Link>
-              <p data-testid={ `${index}-horizontal-done-date` }>
-                {recipe.doneDate}
-              </p>
-              <ShareButton
-                path={ `/${recipe.type}s/${recipe.id}` }
-                data={ `${index}-horizontal-share-btn` }
-              />
-              <div>
+          filtredRecipes.length === 0 ? (
+            <p>Não existem receitas concluidas!</p>
+          ) : (
+            filtredRecipes.map((recipe, index) => (
+              <div key={ index }>
+                <Link to={ `/${recipe.type}s/${recipe.id}` }>
+                  <img
+                    src={ recipe.image }
+                    alt={ recipe.name }
+                    data-testid={ `${index}-horizontal-image` }
+                    style={ { width: '150px' } }
+                  />
+                </Link>
                 {
-                  tags(recipe.tags[0]).slice(0, 2).map((tagName) => (
-                    <p
-                      key={ tagName }
-                      data-testid={ `${index}-${tagName}-horizontal-tag` }
-                    >
-                      {tagName}
+                  recipe.type === 'food' ? (
+                    <p data-testid={ `${index}-horizontal-top-text` }>
+                      {`${recipe.nationality} - ${recipe.category}`}
                     </p>
-                  ))
+                  ) : (
+                    <p data-testid={ `${index}-horizontal-top-text` }>
+                      {recipe.alcoholicOrNot}
+                    </p>
+                  )
                 }
+                <Link to={ `/${recipe.type}s/${recipe.id}` }>
+                  <p data-testid={ `${index}-horizontal-name` }>
+                    {recipe.name}
+                  </p>
+                </Link>
+                <p data-testid={ `${index}-horizontal-done-date` }>
+                  {recipe.doneDate}
+                </p>
+                <ShareButton
+                  path={ `/${recipe.type}s/${recipe.id}` }
+                  data={ `${index}-horizontal-share-btn` }
+                />
+                <div>
+                  {
+                    recipe.tags.slice(0, 2).map((tagName) => (
+                      <p
+                        key={ tagName }
+                        data-testid={ `${index}-${tagName}-horizontal-tag` }
+                      >
+                        {tagName}
+                      </p>
+                    ))
+                  }
+                </div>
               </div>
-            </div>
-          ))
+            ))
+          )
         }
       </div>
     </div>

@@ -56,7 +56,7 @@ function RecipeProgress() {
       const getLocal = JSON.parse(localStorage.getItem('inProgressRecipes'));
       const type = path.includes('foods') ? 'meals' : 'cocktails';
       if (getLocal && getIngredientArray() !== null) {
-        const ingredientsChecked = getLocal[type][idPath];
+        const ingredientsChecked = getLocal[type][idPath] || [];
         if (ingredientsChecked.length === getIngredientArray().length) {
           setButtonFinish(false);
         } else {
@@ -112,7 +112,7 @@ function RecipeProgress() {
       setIngredientsCheckedList(removeChecked);
       const getLocal = JSON.parse(localStorage.getItem('inProgressRecipes'));
       const type = path.includes('foods') ? 'meals' : 'cocktails';
-      const ingredientsLocal = getLocal[type][idPath];
+      const ingredientsLocal = getLocal[type][idPath] || [];
       const removeLocal = ingredientsLocal
         .filter((ingredients) => ingredients !== target.value);
       const saveObj = {
@@ -142,7 +142,10 @@ function RecipeProgress() {
     const getLocal = JSON.parse(localStorage.getItem('inProgressRecipes'));
     const type = path.includes('foods') ? 'meals' : 'cocktails';
     if (getLocal) {
-      const ingredientsChecked = getLocal[type][idPath];
+      const ingredientsChecked = getLocal[type][idPath] || [];
+      if (ingredientsCheckedList.length === 0) {
+        return false;
+      }
       return ingredientsChecked
         .some((ingredient) => ingredient === name);
     }
@@ -150,9 +153,18 @@ function RecipeProgress() {
       .some((ingredient) => ingredient === name);
   };
 
+  const tags = (chave) => {
+    if (chave === null) {
+      return [];
+    }
+    const tagsArray = chave.split(',');
+    return tagsArray;
+  };
+
   const onClickFinish = () => {
     const date = new Date();
     const done = JSON.parse(localStorage.getItem('doneRecipes'));
+    const array = [ingredientsDetails.strTags];
     const newDoneRecipe = {
       id: ingredientsDetails.idMeal || ingredientsDetails.idDrink,
       type: findRecipeType(),
@@ -162,7 +174,7 @@ function RecipeProgress() {
       name: ingredientsDetails.strMeal || ingredientsDetails.strDrink,
       image: ingredientsDetails.strMealThumb || ingredientsDetails.strDrinkThumb,
       doneDate: `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`,
-      tags: [ingredientsDetails.strTags] || '',
+      tags: tags(array[0]),
     };
     const doneRecipe = done ? [...done, newDoneRecipe] : [newDoneRecipe];
     localStorage.setItem('doneRecipes', JSON.stringify(doneRecipe));
