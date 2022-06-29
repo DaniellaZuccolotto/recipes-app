@@ -4,10 +4,12 @@ import React from 'react';
 import App from '../App';
 import renderWithRouter from './helpers/renderWithRouter';
 
+const path = '/explore/drinks';
+
 describe('Testa a página Explore Drinks', () => {
   test('Verifica se existem os 2 botões de acordo com o protótipo', () => {
     const { history } = renderWithRouter(<App />);
-    history.push('/explore/drinks');
+    history.push(path);
 
     const byIngredientButton = screen.getByRole('button', {
       name: /by ingredient/i,
@@ -22,7 +24,7 @@ describe('Testa a página Explore Drinks', () => {
 
   test('Verifica se o botão "By Ingredient" redireciona para a rota correta', () => {
     const { history } = renderWithRouter(<App />);
-    history.push('/explore/drinks');
+    history.push(path);
 
     const exploreFoodsButton = screen.getByRole('button', {
       name: /by ingredient/i,
@@ -33,7 +35,7 @@ describe('Testa a página Explore Drinks', () => {
 
   test('Verifica se o botão "Surprise Me" redireciona para uma comida aleatória', () => {
     const { history } = renderWithRouter(<App />);
-    history.push('/explore/drinks');
+    history.push(path);
 
     const surpriseMeButton = screen.getByRole('button', {
       name: /surprise me/i,
