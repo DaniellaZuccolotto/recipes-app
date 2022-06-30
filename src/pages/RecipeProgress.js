@@ -80,6 +80,7 @@ function RecipeProgress() {
           video: actualFood.strYoutube,
           img: actualFood.strMealThumb,
         };
+        console.log(food);
         setRecipeDetails(foodDetail);
         setIngredientsDetails(actualFood);
       }

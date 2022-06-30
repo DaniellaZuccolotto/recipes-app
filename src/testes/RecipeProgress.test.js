@@ -1,5 +1,5 @@
-import { screen } from '@testing-library/react';
-// import userEvent from '@testing-library/user-event';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import App from '../App';
 // import { mockRecipeProgressFood,
@@ -8,21 +8,47 @@ import renderWithRouter from './helpers/renderWithRouter';
 
 const pathFood = '/foods/52977/in-progress';
 const INGREDIENTS_LIST_LENGTH = 13;
-// const TIME_OUT = 3000;
+const TIME_OUT = 1000;
 
 describe('Testa a página de Recipe in Progress', () => {
-  // test('Testa se a Api é chamada', async () => {
-  //   const { history } = renderWithRouter(<App />);
-  //   history.push(pathFood);
+  test('Testa se a Api de Foods é chamada ', async () => {
+    const { history } = renderWithRouter(<App />);
 
-  //   const fetch = jest.spyOn(global, 'fetch');
-  //   const EXPECT_URL = 'https://www.themealdb.com/api/json/v1/1/lookup.php?i=52977';
+    const fetch = jest.spyOn(global, 'fetch');
 
-  //   setTimeout(() => {
-  //   expect(fetch).toHaveBeenCalledWith(EXPECT_URL);
-  //   }, TIME_OUT);
-  //   fetch.mockRestore();
-  // });
+    history.push('/foods/52977');
+    expect(history.location.pathname).toBe('/foods/52977');
+
+    const buttonStart = screen.getByRole('button', {
+      name: /start recipe/i,
+    });
+    userEvent.click(buttonStart);
+    expect(history.location.pathname).toBe(pathFood);
+    const EXPECT_URL = 'https://www.themealdb.com/api/json/v1/1/lookup.php?i=52977';
+
+    expect(fetch).toHaveBeenCalledWith(EXPECT_URL);
+
+    fetch.mockRestore();
+  });
+
+  test('Testa se a Api de Drinks é chamada ', async () => {
+    const { history } = renderWithRouter(<App />);
+
+    const fetch = jest.spyOn(global, 'fetch');
+
+    history.push('/drinks/15997');
+    expect(history.location.pathname).toBe('/drinks/15997');
+    const buttonStart = screen.getByRole('button', {
+      name: /start recipe/i,
+    });
+    userEvent.click(buttonStart);
+    expect(history.location.pathname).toBe('/drinks/15997/in-progress');
+    const EXPECT_URL = 'https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=15997';
+
+    expect(fetch).toHaveBeenCalledWith(EXPECT_URL);
+
+    fetch.mockRestore();
+  });
 
   test('Testa se existe um title, imagem, botao de compartilhar e de favoritar',
     async () => {
@@ -74,5 +100,25 @@ describe('Testa a página de Recipe in Progress', () => {
     });
     expect(buttonFinish).toBeDefined();
     expect(buttonFinish).toBeDisabled();
+  });
+  test('Testa se ao clicar em um checkbox risca o ingrediente', async () => {
+    const { history } = renderWithRouter(<App />);
+    const { localStorage } = global;
+    localStorage.setItem('inProgressRecipes', JSON
+      .stringify({ cocktails: {}, meals: {} }));
+
+    history.push(pathFood);
+    const getLocal = JSON.parse(localStorage.getItem('inProgressRecipes'));
+    expect(getLocal).toEqual({ cocktails: {}, meals: {} });
+    const checkbox = await screen.findByRole('checkbox', {
+      name: /lentils1 cup/i,
+    });
+    const ingredient = await screen.findByText(/lentils1 cup/i);
+    userEvent.click(checkbox);
+    expect(checkbox).toBeChecked();
+    expect(ingredient).toHaveStyle('text-decoration: line-through');
+    // const getLocal = JSON.parse(localStorage.getItem('inProgressRecipes'));
+    // console.log(getLocal);
+    // expect(getLocal).toBe({ cocktails: {}, meals: { 52977: ['Lentils1 cup'] } });
   });
 });
