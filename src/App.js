@@ -54,7 +54,7 @@ function App() {
           path="/:foods/:id/in-progress"
           component={ RecipeProgress }
         />
-        <Route><h1>Pagina não encontrada</h1></Route>
+        <Route><h1>Not Found</h1></Route>
       </Switch>
     </RecipeContextProvider>
     // <div className="meals">
