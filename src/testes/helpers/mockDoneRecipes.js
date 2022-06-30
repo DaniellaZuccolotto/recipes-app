@@ -1,4 +1,4 @@
-export default doneRecipes = [
+const doneRecipes = [
   {
     id: '52978',
     type: 'food',
@@ -20,7 +20,7 @@ export default doneRecipes = [
     image: 'https://www.themealdb.com/images/media/meals/1548772327.jpg',
     doneDate: '28/5/2022',
     tags: [
-      'Paleo,Keto,HighFat,Baking,LowCarbs',
+      'Paleo', 'Keto', 'HighFat', 'Baking', 'LowCarbs',
     ],
   },
   {
@@ -33,7 +33,9 @@ export default doneRecipes = [
     image: 'https://www.thecocktaildb.com/images/media/drink/v0at4i1582478473.jpg',
     doneDate: '28/5/2022',
     tags: [
-      'Alcoholic,Holiday',
+      'Alcoholic', 'Holiday',
     ],
   },
 ];
+
+export default doneRecipes;
