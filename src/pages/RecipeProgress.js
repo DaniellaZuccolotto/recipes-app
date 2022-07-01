@@ -189,13 +189,13 @@ function RecipeProgress() {
             data-testid="recipe-photo"
           />
           <div className="flex mt-3">
-            <ShareButton path={ `/${findRecipeType()}s/${idPath}` } data="share-btn" />
             <FavoriteButton
               btnValue={ JSON.stringify(ingredientsDetails) }
               recipeID={ idPath }
               recipeType={ findRecipeType() }
               data="favorite-btn"
             />
+            <ShareButton path={ `/${findRecipeType()}s/${idPath}` } data="share-btn" />
           </div>
           <p
             data-testid="recipe-category"
