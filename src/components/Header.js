@@ -72,15 +72,21 @@ function Header({ pageName, searchEnabled }) {
 
   return (
     <header>
-      <div>
+      <div className="bg-red-800 flex justify-between text-white">
         <input
           type="image"
           src={ profileIcon }
           alt="profile"
           data-testid="profile-top-btn"
           onClick={ ClickProfileLink }
+          className="bg-white rounded-full h-10 w-10 ml-1 mt-2 px-1 font-black"
         />
-        <h1 data-testid="page-title">{ pageName }</h1>
+        <h1
+          data-testid="page-title"
+          className={ !searchEnabled && 'mr-[10px]' }
+        >
+          { pageName }
+        </h1>
         {
           searchEnabled && (<input
             type="image"
@@ -88,12 +94,16 @@ function Header({ pageName, searchEnabled }) {
             alt="open-search"
             data-testid="search-top-btn"
             onClick={ ChangeSearchStatus }
+            className="bg-white rounded-full h-10 w-10 mr-1 mt-2 px-1"
           />)
         }
       </div>
       {
         enableSearchText && (
-          <div>
+          <div
+            className="bg-red-600 z-0 absolute top-8 right-7 w-4/5 h-[100px]
+            rounded-md flex flex-col justify-center items-center"
+          >
             <input
               type="text"
               placeholder="Digite sua pesquisa"
@@ -101,9 +111,10 @@ function Header({ pageName, searchEnabled }) {
               value={ search }
               onChange={ handleChange }
               data-testid="search-input"
+              className="w-3/5 my-1 rounded-md"
             />
             <div>
-              <label htmlFor="ingredient">
+              <label htmlFor="ingredient" className="font-bold text-white">
                 <input
                   type="radio"
                   id="ingredient"
@@ -114,7 +125,7 @@ function Header({ pageName, searchEnabled }) {
                 />
                 Ingredient
               </label>
-              <label htmlFor="name">
+              <label htmlFor="name" className="font-bold text-white">
                 <input
                   type="radio"
                   id="name"
@@ -122,10 +133,11 @@ function Header({ pageName, searchEnabled }) {
                   value="name"
                   onChange={ handleChange }
                   data-testid="name-search-radio"
+                  className="ml-2"
                 />
                 Name
               </label>
-              <label htmlFor="first-letter">
+              <label htmlFor="first-letter" className="font-bold text-white">
                 <input
                   type="radio"
                   id="first-letter"
@@ -133,6 +145,7 @@ function Header({ pageName, searchEnabled }) {
                   value="first-letter"
                   onChange={ handleChange }
                   data-testid="first-letter-search-radio"
+                  className="ml-2"
                 />
                 First Letter
               </label>
@@ -141,6 +154,8 @@ function Header({ pageName, searchEnabled }) {
               type="button"
               data-testid="exec-search-btn"
               onClick={ onClickSearch }
+              className="bg-red-500 text-white w-16 rounded hover:bg-red-700
+              disabled:bg-red-300 font-bold border-2 border-amber-200 mb-1"
             >
               Search
             </button>

@@ -62,6 +62,8 @@ function ExploreFoodsNationalities() {
         <select
           onChange={ onNationalityChange }
           data-testid="explore-by-nationality-dropdown"
+          className="bg-red-500 text-white w-[150px] ml-[30%] mt-1 rounded
+          font-bold mb-1 border-2 border-amber-200"
         >
           <option
             value="All"
@@ -84,7 +86,7 @@ function ExploreFoodsNationalities() {
         </select>
 
       </div>
-      <section>
+      <section className="flex flex-wrap justify-center items-center pb-[50px]">
         {
           recipesList
             .slice(0, FOOD_LIST_LENGTH).map((recipes, index) => (
