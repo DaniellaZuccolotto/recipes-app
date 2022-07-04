@@ -65,11 +65,13 @@ function Foods() {
   return (
     <main>
       <Header pageName="Foods" />
-      <div>
+      <div className="ml-[25px] mt-2 w-[310px] flex flex-wrap">
         <button
           type="button"
           onClick={ onAllClick }
           data-testid="All-category-filter"
+          className="bg-red-500 text-white w-[98px] ml-1 mt-1 rounded hover:bg-red-700
+          font-bold border-2 border-amber-200"
         >
           All
         </button>
@@ -81,13 +83,15 @@ function Foods() {
               key={ id }
               onClick={ onCategoryClick }
               data-testid={ `${strCategory}-category-filter` }
+              className="bg-red-500 text-white w-[98px] ml-1 mt-1 rounded
+              hover:bg-red-700 font-bold border-2 border-amber-200"
             >
               { strCategory }
             </button>
           ))
         }
       </div>
-      <section>
+      <section className="flex flex-wrap justify-center items-center pb-[50px]">
         {
           recipesList
             .slice(0, FOOD_LIST_LENGTH).map((recipes, index) => (

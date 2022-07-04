@@ -46,14 +46,16 @@ function FavoriteButton({ btnValue, recipeID, recipeType, data, remover }) {
   }, [recipeID]);
 
   return (
-    <input
-      src={ heart }
-      type="image"
-      alt="Botão de favorito"
-      onClick={ onClickFavorite }
-      value={ btnValue }
-      data-testid={ data }
-    />
+    <div className="w-[30px] flex justify-center mr-4">
+      <input
+        src={ heart }
+        type="image"
+        alt="Botão de favorito"
+        onClick={ onClickFavorite }
+        value={ btnValue }
+        data-testid={ data }
+      />
+    </div>
   );
 }
 

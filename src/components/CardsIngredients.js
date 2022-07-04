@@ -41,17 +41,28 @@ function CardsIngredients({ ingredients, index, type }) {
   };
 
   return (
-    <button type="button" onClick={ onClickIngredient }>
-      <main data-testid={ `${index}-ingredient-card` }>
-        <h3 data-testid={ `${index}-card-name` }>{ ingredients }</h3>
-        <img
-          src={ imageUrl() }
-          alt={ ingredients }
-          data-testid={ `${index}-card-img` }
-          style={ { width: 150 } }
-        />
-      </main>
-    </button>
+    <div
+      className="w-[150px] border-2 border-zinc-300 bg-zinc-200 flex flex-col
+      items-center justify-center rounded-lg m-2 truncate"
+    >
+      <button type="button" onClick={ onClickIngredient }>
+        <main data-testid={ `${index}-ingredient-card` }>
+          <h3
+            data-testid={ `${index}-card-name` }
+            className="bar_content text-center text-zinc-700 font-bold left-0
+            max-w-[140px]"
+          >
+            { ingredients }
+          </h3>
+          <img
+            src={ imageUrl() }
+            alt={ ingredients }
+            data-testid={ `${index}-card-img` }
+            className="w-[130px] h-[130px] mb-3 rounded-lg"
+          />
+        </main>
+      </button>
+    </div>
   );
 }
 

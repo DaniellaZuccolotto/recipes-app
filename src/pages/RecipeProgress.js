@@ -14,12 +14,10 @@ function RecipeProgress() {
   const [ingredientsDetails, setIngredientsDetails] = useState({});
   const [ingredientsCheckedList, setIngredientsCheckedList] = useState([]);
   const [buttonFinish, setButtonFinish] = useState(true);
-
   const findRecipeType = () => {
     if (path.includes('foods')) return 'food';
     return 'drink';
   };
-
   const getIngredient = () => {
     const MAX_LENGTH = 50;
     const ingredients = [];
@@ -35,7 +33,6 @@ function RecipeProgress() {
     if (ingredients.length === NUMBER_CINQUENTA) return null;
     return ingredients;
   };
-
   useEffect(() => {
     const getIngredientArray = () => {
       const NUMBER_CINQUENTA = 50;
@@ -51,7 +48,6 @@ function RecipeProgress() {
       if (ingredients.length === NUMBER_CINQUENTA) return null;
       return ingredients;
     };
-
     const buttonFinishDisabled = () => {
       const getLocal = JSON.parse(localStorage.getItem('inProgressRecipes'));
       const type = path.includes('foods') ? 'meals' : 'cocktails';
@@ -66,7 +62,6 @@ function RecipeProgress() {
     };
     buttonFinishDisabled();
   }, [ingredientsCheckedList, buttonFinish, ingredientsDetails, path, idPath]);
-
   useEffect(() => {
     const getRecipeInAPI = async () => {
       if (path.includes('foods')) {
@@ -101,7 +96,6 @@ function RecipeProgress() {
     };
     getRecipeInAPI();
   }, [path, idPath]);
-
   const onclickChecked = ({ target }) => {
     if (target.checked) {
       setIngredientsCheckedList((prevState) => [...prevState, target.value]);
@@ -126,7 +120,6 @@ function RecipeProgress() {
       localStorage.setItem('inProgressRecipes', JSON.stringify(saveObj));
     }
   };
-
   const checkedIngredients = (ingredient) => {
     const getLocal = JSON.parse(localStorage.getItem('inProgressRecipes'));
     if (getLocal) {
@@ -138,7 +131,6 @@ function RecipeProgress() {
       }
     }
   };
-
   const riscar = (name) => {
     const getLocal = JSON.parse(localStorage.getItem('inProgressRecipes'));
     const type = path.includes('foods') ? 'meals' : 'cocktails';
@@ -153,15 +145,11 @@ function RecipeProgress() {
     return ingredientsCheckedList
       .some((ingredient) => ingredient === name);
   };
-
   const tags = (chave) => {
-    if (chave === null) {
-      return [];
-    }
+    if (chave === null) return [];
     const tagsArray = chave.split(',');
     return tagsArray;
   };
-
   const onClickFinish = () => {
     const date = new Date();
     const done = JSON.parse(localStorage.getItem('doneRecipes'));
@@ -181,33 +169,49 @@ function RecipeProgress() {
     localStorage.setItem('doneRecipes', JSON.stringify(doneRecipe));
     history.push('/done-recipes');
   };
-
   return (
-    <div>
-      {
-        getIngredient() && (
-          <main>
-            <h3 data-testid="recipe-title">{ recipeDetails.name }</h3>
-            <img
-              src={ recipeDetails.img }
-              alt={ recipeDetails.name }
-              style={ { width: 100 } }
-              data-testid="recipe-photo"
-            />
-            <ShareButton path={ `/${findRecipeType()}s/${idPath}` } data="share-btn" />
+    <div className="mt-3">
+      { getIngredient() && (
+        <main
+          className="mt-3 w-[330px] border-2 border-zinc-300 bg-zinc-200
+            flex flex-col items-center justify-center rounded-lg m-auto"
+        >
+          <h3
+            data-testid="recipe-title"
+            className="text-center text-zinc-700 left-0 w-[300px] h-auto
+            mt-2.5 mb-0 break-words text-3xl font-extrabold"
+          >
+            { recipeDetails.name }
+          </h3>
+          <img
+            src={ recipeDetails.img }
+            alt={ recipeDetails.name }
+            className="w-[85%] rounded-xl mt-2.5"
+            data-testid="recipe-photo"
+          />
+          <div className="flex mt-3">
             <FavoriteButton
               btnValue={ JSON.stringify(ingredientsDetails) }
               recipeID={ idPath }
               recipeType={ findRecipeType() }
               data="favorite-btn"
             />
-            <p data-testid="recipe-category">{ recipeDetails.category }</p>
+            <ShareButton path={ `/${findRecipeType()}s/${idPath}` } data="share-btn" />
+          </div>
+          <p
+            data-testid="recipe-category"
+            className="text-center text-zinc-400 font-bold left-0 text-xl mt-2.5"
+          >
+            { recipeDetails.category }
+          </p>
+          <div className="flex flex-col">
             { getIngredient().map((ingredients, i) => (
               <label
                 data-testid={ `${i}-ingredient-step` }
                 htmlFor={ `ingredient-${i}` }
                 key={ i }
-                style={ riscar(ingredients) ? { textDecoration: 'line-through' } : null }
+                style={ riscar(ingredients)
+                  ? { textDecoration: 'line-through' } : null }
               >
                 <input
                   id={ `ingredient-${i}` }
@@ -217,23 +221,29 @@ function RecipeProgress() {
                   checked={ checkedIngredients(ingredients) }
                   onChange={ onclickChecked }
                 />
+                {' '}
                 { ingredients }
-              </label>
-            ))}
-            <p data-testid="instructions">{ recipeDetails.instructions }</p>
-            <button
-              type="button"
-              data-testid="finish-recipe-btn"
-              disabled={ buttonFinish }
-              onClick={ onClickFinish }
-            >
-              Finalizar
-            </button>
-          </main>
-        )
-      }
-    </div>
-  );
+              </label>))}
+          </div>
+          <p
+            data-testid="instructions"
+            className="text-zinc-600 left-0 w-[300px] h-auto
+              mt-2.5 mb-0 break-words text-justify"
+          >
+            { recipeDetails.instructions }
+          </p>
+          <button
+            type="button"
+            data-testid="finish-recipe-btn"
+            disabled={ buttonFinish }
+            onClick={ onClickFinish }
+            className="bg-red-500 text-white w-16 rounded hover:bg-red-700
+              disabled:bg-red-300 font-bold"
+          >
+            Finalizar
+          </button>
+        </main>
+      )}
+    </div>);
 }
-
 export default RecipeProgress;

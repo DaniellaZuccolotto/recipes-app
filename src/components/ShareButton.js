@@ -22,17 +22,24 @@ function ShareButton({ path, data }) {
   }, [copied]);
 
   return (
-    <div>
+    <div className="w-[30px] flex justify-center ml-4">
       <input
         type="image"
         src={ shareIcon }
         alt="Botão de compartilhamento"
         data-testid={ data }
         onClick={ shareRecipe }
+        className="left-0"
       />
       {
         copied && (
-          <p>Link copied!</p>
+          <p
+            className="bg-red-800 z-0 absolute top-auto right-auto w-[140px] h-[30px]
+            rounded-md flex flex-col justify-center items-center font-bold text-white
+            opacity-90"
+          >
+            Link copied!
+          </p>
         )
       }
     </div>

@@ -118,38 +118,86 @@ function RecipesDetails() {
   };
 
   return (
-    <main>
+    <main
+      className="w-[330px] border-2 border-zinc-300 bg-zinc-200 flex flex-col
+      items-center justify-center rounded-lg m-auto"
+    >
       <img
         data-testid="recipe-photo"
         alt="Foto da Receita"
         src={ details.img }
-        style={ { width: 100 } }
+        className="w-[85%] rounded-xl mt-2.5"
       />
-      <h1 data-testid="recipe-title">{details.name}</h1>
-      <h2 data-testid="recipe-category">{details.category}</h2>
-      <FavoriteButton
-        btnValue={ JSON.stringify(apiReturn) }
-        recipeID={ id }
-        recipeType={ recipe }
-        data="favorite-btn"
-      />
-      <ShareButton
-        path={ path }
-        data="share-btn"
-      />
-      <h2>Ingredients</h2>
+      <h1
+        data-testid="recipe-title"
+        className="text-center text-zinc-700 left-0 w-[300px] h-auto
+        mt-2.5 mb-0 break-words text-3xl font-extrabold"
+      >
+        {details.name}
+      </h1>
+      <h2
+        data-testid="recipe-category"
+        className="text-center text-zinc-400 font-bold left-0
+        text-xl"
+      >
+        {details.category}
+      </h2>
+      <div className="flex">
+        <FavoriteButton
+          btnValue={ JSON.stringify(apiReturn) }
+          recipeID={ id }
+          recipeType={ recipe }
+          data="favorite-btn"
+        />
+        <ShareButton
+          path={ path }
+          data="share-btn"
+        />
+      </div>
+      <h2
+        className="text-center text-zinc-600 font-bold left-0
+        text-2xl mt-3"
+      >
+        Ingredients
+      </h2>
       <section className="ingredients">
-        <ul>
+        <ul className="flex flex-col">
           {GetIngredient()}
         </ul>
       </section>
-      <h2>Instructions</h2>
+      <h2
+        className="text-center text-zinc-600 font-bold left-0
+        text-2xl mt-2"
+      >
+        Instructions
+      </h2>
       <section className="instructions">
-        <p data-testid="instructions">{details.instructions}</p>
+        <p
+          data-testid="instructions"
+          className="text-zinc-600 left-0 w-[300px] h-auto
+          mt-2.5 mb-0 break-words text-justify"
+        >
+          {details.instructions}
+        </p>
       </section>
-      <h2>Video</h2>
-      <iframe data-testid="video" src={ details.video } title={ details.name } />
-      <h2>Recommended</h2>
+      <h2
+        className="text-center text-zinc-600 font-bold left-0
+        text-2xl mt-2"
+      >
+        Video
+      </h2>
+      <iframe
+        data-testid="video"
+        src={ details.video }
+        title={ details.name }
+        className="w-[310px] border-2 border-zinc-300"
+      />
+      <h2
+        className="text-center text-zinc-600 font-bold left-0
+        text-2xl mt-2"
+      >
+        Recommended
+      </h2>
       <section className="recommended">
         { recomendRecipes.slice(0, RECIPE_LIST_LENGTH).map((recipes, index) => (
           <div
@@ -168,7 +216,7 @@ function RecipesDetails() {
         !isDone && (
           <button
             type="button"
-            className="start-btn"
+            className="start-btn bg-red-800 text-white font-bold"
             data-testid="start-recipe-btn"
             onClick={ onClickStart }
           >

@@ -35,38 +35,47 @@ function Login() {
   };
 
   return (
-    <form>
-      <label htmlFor="email">
-        <input
-          name="email"
-          value={ email }
-          onChange={ handleChange }
-          type="email"
-          id="email"
-          placeholder="E-mail"
-          data-testid="email-input"
-        />
-      </label>
-      <label htmlFor="password">
-        <input
-          name="password"
-          value={ password }
-          onChange={ handleChange }
-          type="password"
-          id="password"
-          placeholder="Password"
-          data-testid="password-input"
-        />
-      </label>
-      <button
-        type="submit"
-        data-testid="login-submit-btn"
-        disabled={ disabledBtn() }
-        onClick={ handleClick }
+    <div className="w-screen h-screen bg-red-800 flex flex-col">
+      <form
+        className="h-32 w-80 bg-amber-300 m-0 mx-auto my-auto flex flex-col
+        justify-center content-center rounded-md"
       >
-        Enter
-      </button>
-    </form>
+        <label htmlFor="email">
+          <input
+            name="email"
+            value={ email }
+            onChange={ handleChange }
+            type="email"
+            id="email"
+            placeholder="E-mail"
+            data-testid="email-input"
+            className="w-3/5 ml-16 rounded-md"
+          />
+        </label>
+        <label htmlFor="password">
+          <input
+            name="password"
+            value={ password }
+            onChange={ handleChange }
+            type="password"
+            id="password"
+            placeholder="Password"
+            data-testid="password-input"
+            className="w-3/5 ml-16 rounded-md"
+          />
+        </label>
+        <button
+          type="submit"
+          data-testid="login-submit-btn"
+          disabled={ disabledBtn() }
+          onClick={ handleClick }
+          className="bg-red-500 text-white w-16 rounded ml-32 hover:bg-red-700
+          disabled:bg-red-300 font-bold"
+        >
+          Enter
+        </button>
+      </form>
+    </div>
   );
 }
 

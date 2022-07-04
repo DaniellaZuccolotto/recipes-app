@@ -11,13 +11,26 @@ function CardsRecipe({ recipes, index, type }) {
 
   return (
     <Link to={ `/${type}/${recipe.id}` }>
-      <main data-testid={ `${index}-recipe-card` }>
-        <h3 data-testid={ `${index}-card-name` }>{ recipe.name }</h3>
+      <main
+        className="w-[150px] border-2 border-zinc-300 bg-zinc-200 flex flex-col
+        items-center justify-center rounded-lg m-2 truncate"
+      >
+        {/* <h3
+            data-testid={ `${index}-card-name` }
+            className="text-center text-zinc-700 font-bold left-0 max-w-[140px]"
+          > */}
+        <span
+          className="bar_content text-center text-zinc-700 font-bold left-0
+          max-w-[140px]"
+        >
+          { recipe.name }
+        </span>
+        {/* </h3> */}
         <img
           src={ recipe.img }
           alt={ recipe.name }
           data-testid={ `${index}-card-img` }
-          style={ { width: 150 } }
+          className="w-[75%] mb-3 rounded-lg"
         />
       </main>
     </Link>

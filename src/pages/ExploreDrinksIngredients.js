@@ -23,7 +23,7 @@ function ExploreDrinksIngredients() {
     <div>
       <Header pageName="Explore Ingredients" searchEnabled={ false } />
 
-      <section>
+      <section className="flex flex-wrap justify-center items-center pb-[50px]">
         { ingredientsList.length > 0
           && ingredientsList
             .slice(0, INGREDIENTS_LIST_LENGTH).map(({ strIngredient1 }, index) => (

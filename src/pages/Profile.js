@@ -27,31 +27,49 @@ function Profile() {
   return (
     <div>
       <Header pageName="Profile" searchEnabled={ false } />
-      <p role="paragraph" data-testid="profile-email">{email()}</p>
-
-      <button
-        type="button"
-        data-testid="profile-done-btn"
-        onClick={ handleDoneRecipesClick }
+      <div
+        className="w-[90%]border-2 border-zinc-300 bg-zinc-200 flex flex-col
+        items-center justify-center rounded-lg m-2 truncate"
       >
-        Done Recipes
-      </button>
 
-      <button
-        type="button"
-        data-testid="profile-favorite-btn"
-        onClick={ handleFavoriteClick }
-      >
-        Favorite Recipes
-      </button>
+        <p
+          role="paragraph"
+          data-testid="profile-email"
+          className="text-center text-zinc-700 font-bold mt-2"
+        >
+          {email()}
+        </p>
 
-      <button
-        type="button"
-        data-testid="profile-logout-btn"
-        onClick={ handleLogoutClick }
-      >
-        Logout
-      </button>
+        <button
+          type="button"
+          data-testid="profile-done-btn"
+          onClick={ handleDoneRecipesClick }
+          className="bg-red-500 text-white w-[150px] ml-1 mt-1 rounded hover:bg-red-700
+          font-bold mb-1 border-2 border-amber-200"
+        >
+          Done Recipes
+        </button>
+
+        <button
+          type="button"
+          data-testid="profile-favorite-btn"
+          onClick={ handleFavoriteClick }
+          className="bg-red-500 text-white w-[150px] ml-1 mt-1 rounded hover:bg-red-700
+          font-bold mb-1 border-2 border-amber-200"
+        >
+          Favorite Recipes
+        </button>
+
+        <button
+          type="button"
+          data-testid="profile-logout-btn"
+          onClick={ handleLogoutClick }
+          className="bg-red-500 text-white w-[150px] ml-1 mt-1 rounded hover:bg-red-700
+          font-bold mb-2 border-2 border-amber-200"
+        >
+          Logout
+        </button>
+      </div>
       <Footer />
     </div>
   );
