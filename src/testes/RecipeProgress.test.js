@@ -1,14 +1,14 @@
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import App from '../App';
-// import { mockRecipeProgressFood,
-// } from './helpers/mockRecipeProgress';
+import { mockRecipeProgressFood,
+} from './helpers/mockRecipeProgress';
 import renderWithRouter from './helpers/renderWithRouter';
 
 const pathFood = '/foods/52977/in-progress';
 const INGREDIENTS_LIST_LENGTH = 13;
-const TIME_OUT = 1000;
+// const TIME_OUT = 1000;
 
 describe('Testa a página de Recipe in Progress', () => {
   test('Testa se a Api de Foods é chamada ', async () => {
@@ -55,10 +55,6 @@ describe('Testa a página de Recipe in Progress', () => {
       const { history } = renderWithRouter(<App />);
       history.push(pathFood);
 
-      // fetch.mockResolvedValue({
-      //   json: jest.fn().mockResolvedValue(mockRecipeProgressFood),
-      // });
-
       const titleRecipe = await screen.findByRole('heading', {
         name: /corba/i,
       });
@@ -104,21 +100,24 @@ describe('Testa a página de Recipe in Progress', () => {
   test('Testa se ao clicar em um checkbox risca o ingrediente', async () => {
     const { history } = renderWithRouter(<App />);
     const { localStorage } = global;
+
+    history.push(pathFood);
+
     localStorage.setItem('inProgressRecipes', JSON
       .stringify({ cocktails: {}, meals: {} }));
 
-    history.push(pathFood);
     const getLocal = JSON.parse(localStorage.getItem('inProgressRecipes'));
     expect(getLocal).toEqual({ cocktails: {}, meals: {} });
+
     const checkbox = await screen.findByRole('checkbox', {
       name: /lentils1 cup/i,
     });
-    const ingredient = await screen.findByText(/lentils1 cup/i);
     userEvent.click(checkbox);
     expect(checkbox).toBeChecked();
-    expect(ingredient).toHaveStyle('text-decoration: line-through');
-    // const getLocal = JSON.parse(localStorage.getItem('inProgressRecipes'));
-    // console.log(getLocal);
-    // expect(getLocal).toBe({ cocktails: {}, meals: { 52977: ['Lentils1 cup'] } });
+    // const ingredient = await screen.findByText(/lentils1 cup/i);
+    // expect(ingredient).toHaveStyle('text-decoration: line-through;');
+    // expect(checkbox).toHaveStyleRule('text-decoration', expect
+    //   .stringContaining('line-through'));
+    // expect(getLocal).toEqual({ cocktails: {}, meals: { 52977: ['Lentils1 cup'] } });
   });
 });
