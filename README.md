@@ -26,9 +26,9 @@ npm run test-coverage
 ### Demonstração
 
 👨🏻‍💻 **Acessar:** _[Clique Aqui](https://recipes-app-ruby-two.vercel.app/)_
-```
+
 email para acesso: tryber@teste.com
-```
+
 senha: 12345678
 ```
 Obs.: O design foi realizado com o proposito de mobile first com as dimensões de 360x670.
