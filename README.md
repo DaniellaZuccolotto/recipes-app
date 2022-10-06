@@ -27,7 +27,7 @@ npm run test-coverage
 
 👨🏻‍💻 **Acessar:** _[Clique Aqui](https://recipes-app-ruby-two.vercel.app/)_
 
-email para acesso: tryber@teste.com
+email para acesso: test@teste.com
 
 senha: 12345678
 
